@@ -52,23 +52,23 @@
 
 | Template ID | Category | Status | Description |
 | :--- | :--- | :---: | :--- |
-| `BASE_SIMPLE` | Base | `PLANNED` | Additive base DAX measure compiled directly from certified semantic metric expression. |
-| `BASE_RATIO` | Base | `PLANNED` | Zero-safe ratio measure compiled via DIVIDE(numerator, denominator, BLANK()). |
-| `TIME_YTD` | Time Intelligence | `PLANNED` | Year-to-date cumulative calculation bound to conformed dim_date[date_day]. |
-| `TIME_YOY_PCT` | Time Intelligence | `PLANNED` | Year-over-year percentage variance using SAMEPERIODLASTYEAR and defensive DIVIDE. |
-| `TIME_MOM_PCT` | Time Intelligence | `PLANNED` | Month-over-month percentage variance using DATEADD(..., -1, MONTH). |
-| `TIME_ROLLING_12M` | Time Intelligence | `PLANNED` | Rolling 12-month window calculation over dim_date[date_day]. |
-| `TARGET_BASE` | Target & Variance | `PLANNED` | Target benchmark measure compiled from certified target_expression. |
-| `TARGET_VARIANCE` | Target & Variance | `PLANNED` | Absolute variance against target ([Base] - [Target]). |
-| `TARGET_VARIANCE_PCT` | Target & Variance | `PLANNED` | Relative percentage variance against target via DIVIDE. |
+| `BASE_SIMPLE` | Base | `IMPLEMENTED` | Additive base DAX measure compiled directly from certified semantic metric expression. |
+| `BASE_RATIO` | Base | `IMPLEMENTED` | Zero-safe ratio measure compiled via DIVIDE(numerator, denominator, BLANK()). |
+| `TIME_YTD` | Time Intelligence | `IMPLEMENTED` | Year-to-date cumulative calculation bound to conformed dim_date[date_day]. |
+| `TIME_YOY_PCT` | Time Intelligence | `IMPLEMENTED` | Year-over-year percentage variance using SAMEPERIODLASTYEAR and defensive DIVIDE. |
+| `TIME_MOM_PCT` | Time Intelligence | `IMPLEMENTED` | Month-over-month percentage variance using DATEADD(..., -1, MONTH). |
+| `TIME_ROLLING_12M` | Time Intelligence | `IMPLEMENTED` | Rolling 12-month window calculation over dim_date[date_day]. |
+| `TARGET_BASE` | Target & Variance | `IMPLEMENTED` | Target benchmark measure compiled from certified target_expression. |
+| `TARGET_VARIANCE` | Target & Variance | `IMPLEMENTED` | Absolute variance against target ([Base] - [Target]). |
+| `TARGET_VARIANCE_PCT` | Target & Variance | `IMPLEMENTED` | Relative percentage variance against target via DIVIDE. |
 
 ### Power Query M Targets
 
 | Target | Connector Function | Parameters | Status |
 | :--- | :--- | :--- | :---: |
-| `duckdb` | `Odbc.DataSource` | `pDatabasePath`, `pSchemaName` | `PLANNED` |
-| `databricks` | `Databricks.Catalogs` | `pServerHostname`, `pHttpPath`, `pCatalog`, `pSchema` | `PLANNED` |
-| `snowflake` | `Snowflake.Databases` | `pAccountServer`, `pWarehouse`, `pDatabase`, `pSchema` | `PLANNED` |
+| `duckdb` | `Odbc.DataSource` | `pDatabasePath`, `pSchemaName` | `IMPLEMENTED` |
+| `databricks` | `Databricks.Catalogs` | `pServerHostname`, `pHttpPath`, `pCatalog`, `pSchema` | `IMPLEMENTED` |
+| `snowflake` | `Snowflake.Databases` | `pAccountServer`, `pWarehouse`, `pDatabase`, `pSchema` | `IMPLEMENTED` |
 
 ## 5. NL2SQL Benchmark Suites & CI Quality Gates
 

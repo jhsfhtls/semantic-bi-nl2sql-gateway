@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "last_updated": "2026-11-23",
   "project_name": "semantic-bi-nl2sql-gateway",
-  "current_phase_id": "phase-02",
+  "current_phase_id": "phase-03",
   "overall_status": "ON_TRACK",
   "phases": [
     {
@@ -55,12 +55,12 @@
       "label": "Fase 03",
       "name": "Codegen Power BI (DAX, TMDL, Power Query M, Tema WCAG AA)",
       "branch": "feat/phase-03-powerbi-codegen",
-      "status": "PENDING",
-      "completed_at": null,
+      "status": "COMPLETED",
+      "completed_at": "2026-11-23",
       "deliverables": [
-        "Gerador .dax e .tmdl (medidas base + YTD, YoY%, MoM%, Rolling 12M, variância vs. meta)",
-        "Scripts .pq parametrizados para DuckDB, Databricks e Snowflake",
-        "corporate_theme.json com contraste WCAG AA (>= 4.5:1) e dicionário de KPIs em Markdown"
+        "Gerador .dax e .tmdl (52 medidas: base + YTD, YoY%, MoM%, R12M e variância vs. meta via DIVIDE)",
+        "Scripts .pq parametrizados para DuckDB, Databricks e Snowflake com contratos explícitos de tipos",
+        "corporate_theme.json WCAG 2.1 AA (>= 4.5:1), kpi_dictionary.md, validadores estruturais e golden files"
       ],
       "gate": "Golden files determinísticos e validadores sintáticos/WCAG AA verdes"
     },
@@ -152,6 +152,12 @@
       "phase": "Fase 02",
       "milestone": "Projeto dbt Sintético, Ingestor de Metadados & Compilador Semântico",
       "summary": "Projeto dbt DuckDB (5 seeds, 11 modelos, 33 data tests, 100% docs coverage), DbtMetadataIngestor e SemanticCompiler prevenindo fan-out e chasm traps."
+    },
+    {
+      "date": "2026-11-23",
+      "phase": "Fase 03",
+      "milestone": "Codegen Power BI Determinístico (DAX, TMDL, Power Query M, WCAG AA & KPI Dict)",
+      "summary": "PowerBiCodeGenerator emitindo 52 medidas DAX/TMDL, scripts M para DuckDB/Databricks/Snowflake, tema WCAG AA e dicionário KPI validados com golden files."
     }
   ]
 }
