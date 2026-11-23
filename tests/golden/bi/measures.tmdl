@@ -1,0 +1,314 @@
+table '_Measures'
+	lineageTag: sbg-semantic-measures
+
+	measure 'Average Order Value (BRL)' =
+			DIVIDE(SUM('fct_revenue_orders'[net_revenue_brl]), DISTINCTCOUNT('fct_revenue_orders'[order_id]), BLANK())
+		formatString: #,##0.00
+		displayFolder: Finance\Unit Economics
+		description: Net revenue divided by distinct recognized orders.
+
+	measure 'Average Order Value (BRL) YTD' =
+			TOTALYTD([Average Order Value (BRL)], 'dim_date'[date_day])
+		formatString: #,##0.00
+		displayFolder: Finance\Unit Economics\Time Intelligence
+		description: Year-to-date cumulative value of Average Order Value (BRL).
+
+	measure 'Average Order Value (BRL) YoY %' =
+			VAR _py = CALCULATE([Average Order Value (BRL)], SAMEPERIODLASTYEAR('dim_date'[date_day])) RETURN DIVIDE([Average Order Value (BRL)] - _py, _py, BLANK())
+		formatString: 0.00%
+		displayFolder: Finance\Unit Economics\Time Intelligence
+		description: Year-over-year percentage change for Average Order Value (BRL).
+
+	measure 'Average Order Value (BRL) MoM %' =
+			VAR _pm = CALCULATE([Average Order Value (BRL)], DATEADD('dim_date'[date_day], -1, MONTH)) RETURN DIVIDE([Average Order Value (BRL)] - _pm, _pm, BLANK())
+		formatString: 0.00%
+		displayFolder: Finance\Unit Economics\Time Intelligence
+		description: Month-over-month percentage change for Average Order Value (BRL).
+
+	measure 'Average Order Value (BRL) R12M' =
+			CALCULATE([Average Order Value (BRL)], DATESINPERIOD('dim_date'[date_day], MAX('dim_date'[date_day]), -12, MONTH))
+		formatString: #,##0.00
+		displayFolder: Finance\Unit Economics\Time Intelligence
+		description: Rolling 12-month window calculation for Average Order Value (BRL).
+
+	measure 'Gross Margin (%)' =
+			DIVIDE(SUM('fct_revenue_orders'[gross_margin_brl]), SUM('fct_revenue_orders'[net_revenue_brl]), BLANK())
+		formatString: 0.00%
+		displayFolder: Finance\Margins
+		description: Ratio of total gross margin to total net revenue.
+
+	measure 'Gross Margin (%) YTD' =
+			TOTALYTD([Gross Margin (%)], 'dim_date'[date_day])
+		formatString: 0.00%
+		displayFolder: Finance\Margins\Time Intelligence
+		description: Year-to-date cumulative value of Gross Margin (%).
+
+	measure 'Gross Margin (%) YoY %' =
+			VAR _py = CALCULATE([Gross Margin (%)], SAMEPERIODLASTYEAR('dim_date'[date_day])) RETURN DIVIDE([Gross Margin (%)] - _py, _py, BLANK())
+		formatString: 0.00%
+		displayFolder: Finance\Margins\Time Intelligence
+		description: Year-over-year percentage change for Gross Margin (%).
+
+	measure 'Gross Margin (%) MoM %' =
+			VAR _pm = CALCULATE([Gross Margin (%)], DATEADD('dim_date'[date_day], -1, MONTH)) RETURN DIVIDE([Gross Margin (%)] - _pm, _pm, BLANK())
+		formatString: 0.00%
+		displayFolder: Finance\Margins\Time Intelligence
+		description: Month-over-month percentage change for Gross Margin (%).
+
+	measure 'Gross Margin (%) R12M' =
+			CALCULATE([Gross Margin (%)], DATESINPERIOD('dim_date'[date_day], MAX('dim_date'[date_day]), -12, MONTH))
+		formatString: 0.00%
+		displayFolder: Finance\Margins\Time Intelligence
+		description: Rolling 12-month window calculation for Gross Margin (%).
+
+	measure 'Gross Margin (%) Target' =
+			0.65
+		formatString: 0.00%
+		displayFolder: Finance\Margins\Targets
+		description: Certified target benchmark for Gross Margin (%).
+
+	measure 'Gross Margin (%) Variance vs Target' =
+			[Gross Margin (%)] - [Gross Margin (%) Target]
+		formatString: 0.00%
+		displayFolder: Finance\Margins\Targets
+		description: Absolute variance of Gross Margin (%) against target.
+
+	measure 'Gross Margin (%) Variance vs Target %' =
+			DIVIDE([Gross Margin (%)] - [Gross Margin (%) Target], [Gross Margin (%) Target], BLANK())
+		formatString: 0.00%
+		displayFolder: Finance\Margins\Targets
+		description: Relative percentage variance of Gross Margin (%) against target.
+
+	measure 'Mean Time To Resolution (Hours)' =
+			DIVIDE(SUM('fct_sla_tickets'[resolution_hours]), DISTINCTCOUNT('fct_sla_tickets'[ticket_id]), BLANK())
+		formatString: #,##0.00
+		displayFolder: Operations\SLA
+		description: Average resolution duration in hours across service tickets.
+
+	measure 'Mean Time To Resolution (Hours) YTD' =
+			TOTALYTD([Mean Time To Resolution (Hours)], 'dim_date'[date_day])
+		formatString: #,##0.00
+		displayFolder: Operations\SLA\Time Intelligence
+		description: Year-to-date cumulative value of Mean Time To Resolution (Hours).
+
+	measure 'Mean Time To Resolution (Hours) YoY %' =
+			VAR _py = CALCULATE([Mean Time To Resolution (Hours)], SAMEPERIODLASTYEAR('dim_date'[date_day])) RETURN DIVIDE([Mean Time To Resolution (Hours)] - _py, _py, BLANK())
+		formatString: 0.00%
+		displayFolder: Operations\SLA\Time Intelligence
+		description: Year-over-year percentage change for Mean Time To Resolution (Hours).
+
+	measure 'Mean Time To Resolution (Hours) MoM %' =
+			VAR _pm = CALCULATE([Mean Time To Resolution (Hours)], DATEADD('dim_date'[date_day], -1, MONTH)) RETURN DIVIDE([Mean Time To Resolution (Hours)] - _pm, _pm, BLANK())
+		formatString: 0.00%
+		displayFolder: Operations\SLA\Time Intelligence
+		description: Month-over-month percentage change for Mean Time To Resolution (Hours).
+
+	measure 'Mean Time To Resolution (Hours) R12M' =
+			CALCULATE([Mean Time To Resolution (Hours)], DATESINPERIOD('dim_date'[date_day], MAX('dim_date'[date_day]), -12, MONTH))
+		formatString: #,##0.00
+		displayFolder: Operations\SLA\Time Intelligence
+		description: Rolling 12-month window calculation for Mean Time To Resolution (Hours).
+
+	measure 'Mean Time To Resolution (Hours) Target' =
+			12.0
+		formatString: #,##0.00
+		displayFolder: Operations\SLA\Targets
+		description: Certified target benchmark for Mean Time To Resolution (Hours).
+
+	measure 'Mean Time To Resolution (Hours) Variance vs Target' =
+			[Mean Time To Resolution (Hours)] - [Mean Time To Resolution (Hours) Target]
+		formatString: #,##0.00
+		displayFolder: Operations\SLA\Targets
+		description: Absolute variance of Mean Time To Resolution (Hours) against target.
+
+	measure 'Mean Time To Resolution (Hours) Variance vs Target %' =
+			DIVIDE([Mean Time To Resolution (Hours)] - [Mean Time To Resolution (Hours) Target], [Mean Time To Resolution (Hours) Target], BLANK())
+		formatString: 0.00%
+		displayFolder: Operations\SLA\Targets
+		description: Relative percentage variance of Mean Time To Resolution (Hours) against target.
+
+	measure 'Order Count' =
+			DISTINCTCOUNT('fct_revenue_orders'[order_id])
+		formatString: #,##0
+		displayFolder: Finance\Volume
+		description: Distinct count of recognized revenue orders.
+
+	measure 'Order Count YTD' =
+			TOTALYTD([Order Count], 'dim_date'[date_day])
+		formatString: #,##0
+		displayFolder: Finance\Volume\Time Intelligence
+		description: Year-to-date cumulative value of Order Count.
+
+	measure 'Order Count YoY %' =
+			VAR _py = CALCULATE([Order Count], SAMEPERIODLASTYEAR('dim_date'[date_day])) RETURN DIVIDE([Order Count] - _py, _py, BLANK())
+		formatString: 0.00%
+		displayFolder: Finance\Volume\Time Intelligence
+		description: Year-over-year percentage change for Order Count.
+
+	measure 'Order Count MoM %' =
+			VAR _pm = CALCULATE([Order Count], DATEADD('dim_date'[date_day], -1, MONTH)) RETURN DIVIDE([Order Count] - _pm, _pm, BLANK())
+		formatString: 0.00%
+		displayFolder: Finance\Volume\Time Intelligence
+		description: Month-over-month percentage change for Order Count.
+
+	measure 'Order Count R12M' =
+			CALCULATE([Order Count], DATESINPERIOD('dim_date'[date_day], MAX('dim_date'[date_day]), -12, MONTH))
+		formatString: #,##0
+		displayFolder: Finance\Volume\Time Intelligence
+		description: Rolling 12-month window calculation for Order Count.
+
+	measure 'SLA Compliance Rate (%)' =
+			DIVIDE(SUM('fct_sla_tickets'[is_sla_met]), DISTINCTCOUNT('fct_sla_tickets'[ticket_id]), BLANK())
+		formatString: 0.00%
+		displayFolder: Operations\SLA
+		description: Share of operational service tickets resolved within contractual SLA targets.
+
+	measure 'SLA Compliance Rate (%) YTD' =
+			TOTALYTD([SLA Compliance Rate (%)], 'dim_date'[date_day])
+		formatString: 0.00%
+		displayFolder: Operations\SLA\Time Intelligence
+		description: Year-to-date cumulative value of SLA Compliance Rate (%).
+
+	measure 'SLA Compliance Rate (%) YoY %' =
+			VAR _py = CALCULATE([SLA Compliance Rate (%)], SAMEPERIODLASTYEAR('dim_date'[date_day])) RETURN DIVIDE([SLA Compliance Rate (%)] - _py, _py, BLANK())
+		formatString: 0.00%
+		displayFolder: Operations\SLA\Time Intelligence
+		description: Year-over-year percentage change for SLA Compliance Rate (%).
+
+	measure 'SLA Compliance Rate (%) MoM %' =
+			VAR _pm = CALCULATE([SLA Compliance Rate (%)], DATEADD('dim_date'[date_day], -1, MONTH)) RETURN DIVIDE([SLA Compliance Rate (%)] - _pm, _pm, BLANK())
+		formatString: 0.00%
+		displayFolder: Operations\SLA\Time Intelligence
+		description: Month-over-month percentage change for SLA Compliance Rate (%).
+
+	measure 'SLA Compliance Rate (%) R12M' =
+			CALCULATE([SLA Compliance Rate (%)], DATESINPERIOD('dim_date'[date_day], MAX('dim_date'[date_day]), -12, MONTH))
+		formatString: 0.00%
+		displayFolder: Operations\SLA\Time Intelligence
+		description: Rolling 12-month window calculation for SLA Compliance Rate (%).
+
+	measure 'SLA Compliance Rate (%) Target' =
+			0.99
+		formatString: 0.00%
+		displayFolder: Operations\SLA\Targets
+		description: Certified target benchmark for SLA Compliance Rate (%).
+
+	measure 'SLA Compliance Rate (%) Variance vs Target' =
+			[SLA Compliance Rate (%)] - [SLA Compliance Rate (%) Target]
+		formatString: 0.00%
+		displayFolder: Operations\SLA\Targets
+		description: Absolute variance of SLA Compliance Rate (%) against target.
+
+	measure 'SLA Compliance Rate (%) Variance vs Target %' =
+			DIVIDE([SLA Compliance Rate (%)] - [SLA Compliance Rate (%) Target], [SLA Compliance Rate (%) Target], BLANK())
+		formatString: 0.00%
+		displayFolder: Operations\SLA\Targets
+		description: Relative percentage variance of SLA Compliance Rate (%) against target.
+
+	measure 'Service Ticket Count' =
+			DISTINCTCOUNT('fct_sla_tickets'[ticket_id])
+		formatString: #,##0
+		displayFolder: Operations\Volume
+		description: Distinct count of operational service tickets.
+
+	measure 'Service Ticket Count YTD' =
+			TOTALYTD([Service Ticket Count], 'dim_date'[date_day])
+		formatString: #,##0
+		displayFolder: Operations\Volume\Time Intelligence
+		description: Year-to-date cumulative value of Service Ticket Count.
+
+	measure 'Service Ticket Count YoY %' =
+			VAR _py = CALCULATE([Service Ticket Count], SAMEPERIODLASTYEAR('dim_date'[date_day])) RETURN DIVIDE([Service Ticket Count] - _py, _py, BLANK())
+		formatString: 0.00%
+		displayFolder: Operations\Volume\Time Intelligence
+		description: Year-over-year percentage change for Service Ticket Count.
+
+	measure 'Service Ticket Count MoM %' =
+			VAR _pm = CALCULATE([Service Ticket Count], DATEADD('dim_date'[date_day], -1, MONTH)) RETURN DIVIDE([Service Ticket Count] - _pm, _pm, BLANK())
+		formatString: 0.00%
+		displayFolder: Operations\Volume\Time Intelligence
+		description: Month-over-month percentage change for Service Ticket Count.
+
+	measure 'Service Ticket Count R12M' =
+			CALCULATE([Service Ticket Count], DATESINPERIOD('dim_date'[date_day], MAX('dim_date'[date_day]), -12, MONTH))
+		formatString: #,##0
+		displayFolder: Operations\Volume\Time Intelligence
+		description: Rolling 12-month window calculation for Service Ticket Count.
+
+	measure 'Total Gross Margin (BRL)' =
+			SUM('fct_revenue_orders'[gross_margin_brl])
+		formatString: #,##0.00
+		displayFolder: Finance\Margins
+		description: Total gross margin contribution in BRL (net revenue minus direct delivery cost).
+
+	measure 'Total Gross Margin (BRL) YTD' =
+			TOTALYTD([Total Gross Margin (BRL)], 'dim_date'[date_day])
+		formatString: #,##0.00
+		displayFolder: Finance\Margins\Time Intelligence
+		description: Year-to-date cumulative value of Total Gross Margin (BRL).
+
+	measure 'Total Gross Margin (BRL) YoY %' =
+			VAR _py = CALCULATE([Total Gross Margin (BRL)], SAMEPERIODLASTYEAR('dim_date'[date_day])) RETURN DIVIDE([Total Gross Margin (BRL)] - _py, _py, BLANK())
+		formatString: 0.00%
+		displayFolder: Finance\Margins\Time Intelligence
+		description: Year-over-year percentage change for Total Gross Margin (BRL).
+
+	measure 'Total Gross Margin (BRL) MoM %' =
+			VAR _pm = CALCULATE([Total Gross Margin (BRL)], DATEADD('dim_date'[date_day], -1, MONTH)) RETURN DIVIDE([Total Gross Margin (BRL)] - _pm, _pm, BLANK())
+		formatString: 0.00%
+		displayFolder: Finance\Margins\Time Intelligence
+		description: Month-over-month percentage change for Total Gross Margin (BRL).
+
+	measure 'Total Gross Margin (BRL) R12M' =
+			CALCULATE([Total Gross Margin (BRL)], DATESINPERIOD('dim_date'[date_day], MAX('dim_date'[date_day]), -12, MONTH))
+		formatString: #,##0.00
+		displayFolder: Finance\Margins\Time Intelligence
+		description: Rolling 12-month window calculation for Total Gross Margin (BRL).
+
+	measure 'Total Net Revenue (BRL)' =
+			SUM('fct_revenue_orders'[net_revenue_brl])
+		formatString: #,##0.00
+		displayFolder: Finance\Revenue
+		description: Total recognized net revenue in BRL after commercial discounts.
+
+	measure 'Total Net Revenue (BRL) YTD' =
+			TOTALYTD([Total Net Revenue (BRL)], 'dim_date'[date_day])
+		formatString: #,##0.00
+		displayFolder: Finance\Revenue\Time Intelligence
+		description: Year-to-date cumulative value of Total Net Revenue (BRL).
+
+	measure 'Total Net Revenue (BRL) YoY %' =
+			VAR _py = CALCULATE([Total Net Revenue (BRL)], SAMEPERIODLASTYEAR('dim_date'[date_day])) RETURN DIVIDE([Total Net Revenue (BRL)] - _py, _py, BLANK())
+		formatString: 0.00%
+		displayFolder: Finance\Revenue\Time Intelligence
+		description: Year-over-year percentage change for Total Net Revenue (BRL).
+
+	measure 'Total Net Revenue (BRL) MoM %' =
+			VAR _pm = CALCULATE([Total Net Revenue (BRL)], DATEADD('dim_date'[date_day], -1, MONTH)) RETURN DIVIDE([Total Net Revenue (BRL)] - _pm, _pm, BLANK())
+		formatString: 0.00%
+		displayFolder: Finance\Revenue\Time Intelligence
+		description: Month-over-month percentage change for Total Net Revenue (BRL).
+
+	measure 'Total Net Revenue (BRL) R12M' =
+			CALCULATE([Total Net Revenue (BRL)], DATESINPERIOD('dim_date'[date_day], MAX('dim_date'[date_day]), -12, MONTH))
+		formatString: #,##0.00
+		displayFolder: Finance\Revenue\Time Intelligence
+		description: Rolling 12-month window calculation for Total Net Revenue (BRL).
+
+	measure 'Total Net Revenue (BRL) Target' =
+			SUM('fct_revenue_orders'[target_revenue_brl])
+		formatString: #,##0.00
+		displayFolder: Finance\Revenue\Targets
+		description: Certified target benchmark for Total Net Revenue (BRL).
+
+	measure 'Total Net Revenue (BRL) Variance vs Target' =
+			[Total Net Revenue (BRL)] - [Total Net Revenue (BRL) Target]
+		formatString: #,##0.00
+		displayFolder: Finance\Revenue\Targets
+		description: Absolute variance of Total Net Revenue (BRL) against target.
+
+	measure 'Total Net Revenue (BRL) Variance vs Target %' =
+			DIVIDE([Total Net Revenue (BRL)] - [Total Net Revenue (BRL) Target], [Total Net Revenue (BRL) Target], BLANK())
+		formatString: 0.00%
+		displayFolder: Finance\Revenue\Targets
+		description: Relative percentage variance of Total Net Revenue (BRL) against target.

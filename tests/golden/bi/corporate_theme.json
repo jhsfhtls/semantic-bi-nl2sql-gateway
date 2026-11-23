@@ -1,0 +1,71 @@
+{
+  "name": "semantic-bi-nl2sql-gateway WCAG AA Corporate Theme",
+  "dataColors": [
+    "#0B4F8C",
+    "#9A3412",
+    "#0F766E",
+    "#6D28D9",
+    "#B91C1C",
+    "#1E293B",
+    "#0369A1",
+    "#7C2D12"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#0F172A",
+  "secondaryBackground": "#F8FAFC",
+  "tableAccent": "#0B4F8C",
+  "good": "#166534",
+  "neutral": "#92400E",
+  "bad": "#B91C1C",
+  "maximum": "#0B4F8C",
+  "center": "#475569",
+  "minimum": "#B91C1C",
+  "textClasses": {
+    "callout": {
+      "fontSize": 28,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#0F172A"
+    },
+    "title": {
+      "fontSize": 14,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#0F172A"
+    },
+    "header": {
+      "fontSize": 12,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#1E293B"
+    },
+    "label": {
+      "fontSize": 10,
+      "fontFace": "Segoe UI",
+      "color": "#334155"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            }
+          }
+        ],
+        "border": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#475569"
+              }
+            },
+            "radius": 6
+          }
+        ]
+      }
+    }
+  }
+}
