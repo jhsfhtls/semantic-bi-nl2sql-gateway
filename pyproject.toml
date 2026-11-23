@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "semantic-bi-nl2sql-gateway"
+version = "0.1.0"
+description = "dbt semantic-layer compiler, automated Power BI (DAX / Power Query M) code generator and AST-guarded zero-hallucination text-to-SQL analytics gateway."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+dependencies = [
+    "dbt-core==1.9.2",
+    "dbt-duckdb==1.9.2",
+    "duckdb==2.0.0",
+    "fastapi==0.162.2",
+    "httpx==0.28.1",
+    "jsonschema==4.26.0",
+    "pyarrow==26.0.1",
+    "pydantic==2.14.3",
+    "PyYAML==6.0.3",
+    "sqlglot==30.33.0",
+    "uvicorn==0.54.0",
+]
+
+[project.scripts]
+sbg = "semantic_bi_gateway.cli.main:main"
+sbg-mcp = "semantic_bi_gateway.mcp.server:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "live: executes optional integration checks requiring external credentials or LLM APIs",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]

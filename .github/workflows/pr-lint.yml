@@ -1,0 +1,107 @@
+name: PR Lint & Repository Governance
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  branch-name:
+    name: Validate Branch Naming Policy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check source branch format
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          if [[ ! "$BRANCH" =~ ^(feat|fix|docs|refactor|chore|ci|test|hotfix)/([a-z0-9]+(-[a-z0-9]+)*|[A-Z]+-[0-9]+(-[a-z0-9]+)+)$ ]]; then
+            echo "ERROR: Invalid branch name '$BRANCH'. Expected kebab-case prefix (e.g., feat/my-feature, fix/issue-123)."
+            exit 1
+          fi
+          description=${BRANCH#*/}
+          if (( ${#description} > 50 )); then
+            echo "ERROR: Branch description exceeds 50 characters."
+            exit 1
+          fi
+          echo "Branch name OK: $BRANCH"
+
+  conventional-commits:
+    name: Validate Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full PR history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate commit messages in PR
+        run: |
+          python - <<'PY'
+          import re
+          import subprocess
+          import sys
+
+          pattern = re.compile(
+              r"^(feat|fix|docs|style|refactor|perf|test|chore|ci)(\([a-z0-9._/-]+\))?!?: [a-z0-9].*"
+          )
+          shas = subprocess.check_output(
+              ["git", "log", "--format=%H", "origin/main..HEAD"], text=True
+          ).splitlines()
+          errors = []
+          for sha in shas:
+              subject = subprocess.check_output(
+                  ["git", "log", "-1", "--format=%s", sha], text=True
+              ).strip()
+              if subject.startswith(("Merge ", "Revert ")):
+                  continue
+              if len(subject) > 72:
+                  errors.append(f"{sha[:7]} exceeds 72 chars ({len(subject)}): {subject}")
+              elif subject.endswith("."):
+                  errors.append(f"{sha[:7]} ends with period: {subject}")
+              elif not pattern.match(subject):
+                  errors.append(f"{sha[:7]} violates Conventional Commits: {subject}")
+          if errors:
+              for err in errors:
+                  print(f"FAIL: {err}", file=sys.stderr)
+              sys.exit(1)
+          print(f"Validated {len(shas)} commits successfully.")
+          PY
+
+  secrets-scan:
+    name: Zero-Trust Secret & Dependency Pinning Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify pinned dependencies and scan for leaked tokens
+        run: |
+          python - <<'PY'
+          import re
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          for req_name in ("requirements.txt", "requirements-dev.txt"):
+              for idx, raw_line in enumerate(Path(req_name).read_text(encoding="utf-8").splitlines(), 1):
+                  line = raw_line.strip()
+                  if not line or line.startswith("#"):
+                      continue
+                  if "==" not in line or any(op in line for op in (">=", "<=", "~=")):
+                      print(f"ERROR: Unpinned dependency in {req_name}:{idx} -> {line}", file=sys.stderr)
+                      sys.exit(1)
+
+          secret_re = re.compile(
+              r"(gh[pousr]_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|-----BEGIN (?:RSA|EC|OPENSSH|PRIVATE) KEY-----)"
+          )
+          for rel in subprocess.check_output(["git", "ls-files"], text=True).splitlines():
+              p = Path(rel)
+              if not p.is_file():
+                  continue
+              text = p.read_bytes().decode("utf-8", errors="ignore")
+              if secret_re.search(text):
+                  print(f"ERROR: Potential secret pattern detected in {rel}", file=sys.stderr)
+                  sys.exit(1)
+          print("Dependency pinning and secret scan passed.")
+          PY

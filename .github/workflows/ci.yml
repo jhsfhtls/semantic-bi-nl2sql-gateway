@@ -1,0 +1,82 @@
+name: CI — Quality, Governance Sync & Offline Test Suite
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality-and-tests:
+    name: Python 3.12 Lint, Schema/Catalog Sync & Pytest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Verify UTF-8 without BOM and LF line endings
+        run: |
+          python - <<'PY'
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          files = subprocess.check_output(["git", "ls-files"], text=True).splitlines()
+          text_exts = {
+              ".py", ".md", ".yaml", ".yml", ".json", ".toml",
+              ".txt", ".sh", ".sql", ".dax", ".tmdl", ".pq",
+              ".example", ".gitattributes", ".gitignore",
+          }
+          errors = []
+          for rel in files:
+              p = Path(rel)
+              if not p.is_file():
+                  continue
+              if p.suffix.lower() not in text_exts and p.name not in {".gitignore", ".gitattributes", "LICENSE"}:
+                  continue
+              raw = p.read_bytes()
+              if raw.startswith(b"\xef\xbb\xbf"):
+                  errors.append(f"UTF-8 BOM detected: {rel}")
+              if b"\r\n" in raw:
+                  errors.append(f"CRLF detected (expected LF): {rel}")
+          if errors:
+              for err in errors:
+                  print(f"ERROR: {err}", file=sys.stderr)
+              sys.exit(1)
+          print(f"Verified {len(files)} tracked files: 100% LF & UTF-8 without BOM.")
+          PY
+
+      - name: Install pinned dependencies and package
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+          pip install --no-deps -e .
+
+      - name: Run Ruff static analysis
+        run: ruff check .
+
+      - name: Validate semantic metrics catalog schema & invariants
+        run: python scripts/validate_metrics_schema.py
+
+      - name: Verify Catalog sync (CATALOG.md)
+        run: python scripts/render_catalog.py --check
+
+      - name: Verify Implementation Tracker sync (JORNADA_IMPLEMENTACAO.md)
+        run: python scripts/render_progress.py --check
+
+      - name: Verify CLI entrypoint (`sbg status --json`)
+        run: |
+          sbg --version
+          sbg status --json
+
+      - name: Execute deterministic offline test suite
+        run: pytest -m "not live" -v
