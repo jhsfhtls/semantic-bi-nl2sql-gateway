@@ -1,0 +1,151 @@
+{
+  "schema_version": "1.0.0",
+  "last_updated": "2026-11-23",
+  "project_name": "semantic-bi-nl2sql-gateway",
+  "current_phase_id": "phase-01",
+  "overall_status": "ON_TRACK",
+  "phases": [
+    {
+      "id": "phase-00",
+      "label": "Fase 00",
+      "name": "ADRs Fundacionais & Contrato Semântico (metrics.yaml)",
+      "branch": "docs/phase-00-adrs-and-semantic-schema",
+      "status": "COMPLETED",
+      "completed_at": "2026-11-23",
+      "deliverables": [
+        "ADR-001: compilação semântica determinística antes de LLM e prevenção de fan-out/chasm traps",
+        "ADR-002: AstSqlFirewall (sqlglot) + defesa em profundidade DuckDB somente-leitura",
+        "ADR-003: padrão determinístico de geração Power BI (DAX/TMDL, Power Query M, tema WCAG AA)",
+        "catalog/metrics_schema.json (Draft 2020-12), catalog/metrics.yaml (6 modelos, 8 joins, 8 métricas) e scripts/validate_metrics_schema.py"
+      ],
+      "gate": "ADRs revisados e schema/invariantes do metrics.yaml validados (PR #1 mergeado)"
+    },
+    {
+      "id": "phase-01",
+      "label": "Fase 01",
+      "name": "Fundação do Repositório, .venv, CI/CD & Renderizadores",
+      "branch": "chore/phase-01-foundation-ci-catalog",
+      "status": "COMPLETED",
+      "completed_at": "2026-11-23",
+      "deliverables": [
+        ".venv isolado Python 3.12 com dependências pinadas (==) em requirements.txt e requirements-dev.txt",
+        "pyproject.toml com entrypoints sbg e sbg-mcp e esqueleto src/semantic_bi_gateway/",
+        "catalog/dax_templates.yaml, catalog/benchmark_registry.yaml e render_catalog.py (CATALOG.md)",
+        "state/project_progress.json e render_progress.py (JORNADA_IMPLEMENTACAO.md)",
+        "Workflows GitHub Actions (.github/workflows/ci.yml e pr-lint.yml), README.md e tests/test_foundation.py"
+      ],
+      "gate": "ruff, validate_metrics_schema, render_* --check, pytest e CI 100% verdes"
+    },
+    {
+      "id": "phase-02",
+      "label": "Fase 02",
+      "name": "Ingestor dbt & Compilador Semântico (Grafo de Joins)",
+      "branch": "feat/phase-02-dbt-ingestor-semantic-compiler",
+      "status": "PENDING",
+      "completed_at": null,
+      "deliverables": [
+        "Projeto dbt sintético embarcado (dbt/, seed=42) com cobertura 100% no lint_dbt_docs.py",
+        "Ingestor de manifest.json, schema.yml e metrics.yaml",
+        "Compilador semântico com grafo dirigido de joins permitidos e prevenção de fan-out e chasm traps"
+      ],
+      "gate": "dbt build, lint_dbt_docs.py e testes unitários (incluindo fan-out/chasm traps) verdes"
+    },
+    {
+      "id": "phase-03",
+      "label": "Fase 03",
+      "name": "Codegen Power BI (DAX, TMDL, Power Query M, Tema WCAG AA)",
+      "branch": "feat/phase-03-powerbi-codegen",
+      "status": "PENDING",
+      "completed_at": null,
+      "deliverables": [
+        "Gerador .dax e .tmdl (medidas base + YTD, YoY%, MoM%, Rolling 12M, variância vs. meta)",
+        "Scripts .pq parametrizados para DuckDB, Databricks e Snowflake",
+        "corporate_theme.json com contraste WCAG AA (>= 4.5:1) e dicionário de KPIs em Markdown"
+      ],
+      "gate": "Golden files determinísticos e validadores sintáticos/WCAG AA verdes"
+    },
+    {
+      "id": "phase-04",
+      "label": "Fase 04",
+      "name": "Text-to-SQL Governado & AstSqlFirewall Completo",
+      "branch": "feat/phase-04-nl2sql-ast-firewall",
+      "status": "PENDING",
+      "completed_at": null,
+      "deliverables": [
+        "Motor NL2SQL determinístico offline (PT/EN sobre catálogo semântico) + adaptador opcional de LLM",
+        "AstSqlFirewall (sqlglot) + DuckDB read-only com bloqueio de IO/rede, PII e bypasses",
+        "Suíte adversarial completa (DROP, ATTACH, COPY, INSTALL, LOAD, PRAGMA, read_csv/parquet, .env, unicode)"
+      ],
+      "gate": "100% de bloqueio na suíte adversarial"
+    },
+    {
+      "id": "phase-05",
+      "label": "Fase 05",
+      "name": "Ponte Multi-Lakehouse Read-Only & Fallback Sintético",
+      "branch": "feat/phase-05-multi-lakehouse-bridge",
+      "status": "PENDING",
+      "completed_at": null,
+      "deliverables": [
+        "Adaptador read-only para public-data-gateway, finops-capex-revenue-lakehouse e ops-sla-telemetry-lakehouse",
+        "Client Path Shield e fallback automático para dataset sintético embarcado (seed=42)"
+      ],
+      "gate": "Execução isolada no GitHub sem dependências privadas + testes de bloqueio de escrita"
+    },
+    {
+      "id": "phase-06",
+      "label": "Fase 06",
+      "name": "Harness de Evals NL2SQL (50 Perguntas + Bateria Adversarial)",
+      "branch": "feat/phase-06-nl2sql-eval-harness",
+      "status": "PENDING",
+      "completed_at": null,
+      "deliverables": [
+        "Benchmark com 50 perguntas de negócio (PT/EN) com gabarito SQL e hash de result-set",
+        "scripts/eval_nl2sql.py com AST equivalence, result-set hash match e adversarial block rate",
+        "Piso mínimo declarado no README e imposto no CI (modo determinístico)"
+      ],
+      "gate": "eval_nl2sql.py verde no CI atingindo os pisos mínimos definidos"
+    },
+    {
+      "id": "phase-07",
+      "label": "Fase 07",
+      "name": "Paridade nas 4 Interfaces (SDK, CLI, FastAPI, MCP)",
+      "branch": "feat/phase-07-four-interface-parity",
+      "status": "PENDING",
+      "completed_at": null,
+      "deliverables": [
+        "SDK SemanticBiGateway e CLI sbg (compile-bi, ask, validate-sql, eval, kpi-dict, status)",
+        "FastAPI /api/v1/* com OpenAPI e MCP sbg-mcp com delimitadores <untrusted_data>",
+        "Testes de paridade e enforcement do AstSqlFirewall em todas as interfaces"
+      ],
+      "gate": "Paridade total, firewall ativo nas 4 interfaces e quickstart <= 60s"
+    },
+    {
+      "id": "phase-08",
+      "label": "Fase 08",
+      "name": "Integração no C.O.R.E. (POP, Skill Inativa & Orquestradores)",
+      "branch": "feat/semantic-bi-nl2sql-integration",
+      "status": "PENDING",
+      "completed_at": null,
+      "deliverables": [
+        "Novo POP em core/docs/Tecnicos/Inteligencia_Artificial_ML_MLOps/ formatado (POP_T_148)",
+        "Skill inativa .agents/skills_inactive/tech-semantic-bi-nl2sql/ + tests/eval_cases.json (>= 4 casos)",
+        "Roteamento sob demanda em biz-consulting-orchestrator (Fase 6), tech-engineering-orchestrator e biz-study-orchestrator"
+      ],
+      "gate": "compile_rules, evals/engine.py --all, check_secrets e CI do core 100% verdes"
+    }
+  ],
+  "history": [
+    {
+      "date": "2026-11-23",
+      "phase": "Fase 00",
+      "milestone": "ADRs Fundacionais & Contrato Semântico",
+      "summary": "Criação do repositório público semantic-bi-nl2sql-gateway, ADR-001..003, JSON Schema Draft 2020-12 e catálogo metrics.yaml validado via PR #1."
+    },
+    {
+      "date": "2026-11-23",
+      "phase": "Fase 01",
+      "milestone": "Fundação, .venv Isolado, CI/CD & Renderizadores Determinísticos",
+      "summary": "Estrutura Python 3.12 com dependências pinadas (==), workflows CI/pr-lint, renderizadores CATALOG.md/JORNADA_IMPLEMENTACAO.md e testes de fundação."
+    }
+  ]
+}
