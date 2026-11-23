@@ -1,0 +1,7 @@
+sbg_semantic_demo:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('SBG_DUCKDB_PATH', 'dbt/target/sbg_semantic_demo.duckdb') }}"
+      threads: 4

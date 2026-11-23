@@ -1,0 +1,190 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: "Conformed calendar dimension supporting fiscal, quarterly, and monthly rollups."
+    columns:
+      - name: date_day
+        description: "Calendar date primary key (YYYY-MM-DD)."
+        data_tests:
+          - unique
+          - not_null
+      - name: year_num
+        description: "Four-digit calendar year."
+        data_tests:
+          - not_null
+      - name: quarter_num
+        description: "Calendar quarter number (1-4)."
+      - name: quarter_label
+        description: "Formatted quarter label (e.g., 2026-Q1)."
+      - name: month_num
+        description: "Calendar month number (1-12)."
+      - name: month_name
+        description: "English month name."
+      - name: year_month
+        description: "Year and month label (YYYY-MM)."
+      - name: is_weekend
+        description: "True when the calendar day falls on Saturday or Sunday."
+      - name: fiscal_year
+        description: "Corporate fiscal year."
+
+  - name: dim_region
+    description: "Conformed geographic region dimension aligned with IBGE UF codes."
+    columns:
+      - name: region_id
+        description: "Canonical string region identifier."
+        data_tests:
+          - unique
+          - not_null
+      - name: region_name
+        description: "Human-readable geographic region name."
+      - name: uf_code
+        description: "Two-letter Brazilian state abbreviation (UF)."
+      - name: macro_region
+        description: "IBGE macro-region name (Norte, Nordeste, Centro-Oeste, Sudeste, Sul)."
+      - name: country_code
+        description: "ISO 3166-1 alpha-2 country code."
+      - name: currency_code
+        description: "Reporting currency code (BRL)."
+
+  - name: dim_customer_segment
+    description: "Conformed B2B customer segment classification."
+    columns:
+      - name: segment_id
+        description: "Canonical customer segment key."
+        data_tests:
+          - unique
+          - not_null
+      - name: segment_name
+        description: "Commercial segment name (Enterprise, Mid-Market, SMB, Public Sector)."
+      - name: tier_group
+        description: "Strategic account tier grouping."
+      - name: account_band
+        description: "Annual contract value band label."
+      - name: is_enterprise
+        description: "True for strategic Enterprise accounts."
+
+  - name: dim_service_tier
+    description: "Conformed operational SLA priority tier and calendar policy."
+    columns:
+      - name: service_tier_id
+        description: "Canonical service tier key."
+        data_tests:
+          - unique
+          - not_null
+      - name: service_tier_name
+        description: "Service tier name (Gold 24x7, Silver Business Hours, Standard)."
+      - name: priority_level
+        description: "Incident severity priority code (P1, P2, P3)."
+      - name: sla_target_hours
+        description: "Contractual SLA resolution target in hours."
+      - name: support_window
+        description: "Applicable SLA calendar window (24x7 or Business Hours)."
+
+  - name: fct_revenue_orders
+    description: "Synthetically generated B2B order revenue, discount, direct cost, and target ledger."
+    columns:
+      - name: order_id
+        description: "Canonical order identifier."
+        data_tests:
+          - unique
+          - not_null
+      - name: order_date
+        description: "Revenue recognition date."
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_day
+      - name: region_id
+        description: "Foreign key to dim_region."
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_region')
+              field: region_id
+      - name: segment_id
+        description: "Foreign key to dim_customer_segment."
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customer_segment')
+              field: segment_id
+      - name: service_tier_id
+        description: "Foreign key to dim_service_tier."
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_service_tier')
+              field: service_tier_id
+      - name: gross_revenue_brl
+        description: "Gross recognized order value in BRL."
+      - name: discount_brl
+        description: "Commercial discount applied in BRL."
+      - name: net_revenue_brl
+        description: "Net recognized revenue in BRL after discounts."
+      - name: direct_cost_brl
+        description: "Direct delivery cost in BRL."
+      - name: gross_margin_brl
+        description: "Gross margin contribution in BRL (net_revenue_brl - direct_cost_brl)."
+      - name: target_revenue_brl
+        description: "Budgeted target net revenue in BRL."
+      - name: order_status
+        description: "Order billing status (INVOICED, COLLECTED, PENDING)."
+        data_tests:
+          - accepted_values:
+              values: ["INVOICED", "COLLECTED", "PENDING"]
+
+  - name: fct_sla_tickets
+    description: "Synthetically generated service-order SLA telemetry and resolution times."
+    columns:
+      - name: ticket_id
+        description: "Canonical service ticket identifier."
+        data_tests:
+          - unique
+          - not_null
+      - name: created_date
+        description: "Ticket creation date."
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_day
+      - name: region_id
+        description: "Foreign key to dim_region."
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_region')
+              field: region_id
+      - name: segment_id
+        description: "Foreign key to dim_customer_segment."
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customer_segment')
+              field: segment_id
+      - name: service_tier_id
+        description: "Foreign key to dim_service_tier."
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_service_tier')
+              field: service_tier_id
+      - name: resolution_hours
+        description: "Elapsed active resolution time in hours."
+      - name: is_sla_met
+        description: "Binary indicator (1 = met SLA, 0 = breached)."
+        data_tests:
+          - accepted_values:
+              values: [0, 1]
+      - name: is_breached
+        description: "Binary indicator (1 = SLA breached, 0 = within SLA)."
+        data_tests:
+          - accepted_values:
+              values: [0, 1]
+      - name: ticket_status
+        description: "Ticket lifecycle status (COMPLETED, SLA_BREACHED, IN_EXECUTION)."
+        data_tests:
+          - accepted_values:
+              values: ["COMPLETED", "SLA_BREACHED", "IN_EXECUTION"]

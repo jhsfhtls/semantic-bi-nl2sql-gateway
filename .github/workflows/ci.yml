@@ -78,5 +78,12 @@ jobs:
           sbg --version
           sbg status --json
 
+      - name: Build reference dbt project & lint 100% docs coverage
+        run: |
+          mkdir -p dbt/target
+          dbt build --project-dir dbt --profiles-dir dbt
+          dbt docs generate --project-dir dbt --profiles-dir dbt
+          python scripts/lint_dbt_docs.py
+
       - name: Execute deterministic offline test suite
         run: pytest -m "not live" -v

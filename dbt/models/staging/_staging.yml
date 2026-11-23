@@ -1,0 +1,96 @@
+version: 2
+
+models:
+  - name: stg_regions
+    description: "Typed staging view for synthetic Brazilian commercial regions aligned with IBGE UFs."
+    columns:
+      - name: region_id
+        description: "Canonical string region identifier."
+      - name: region_name
+        description: "Human-readable geographic region name."
+      - name: uf_code
+        description: "Two-letter Brazilian state abbreviation (UF)."
+      - name: macro_region
+        description: "IBGE macro-region name."
+      - name: country_code
+        description: "ISO 3166-1 alpha-2 country code."
+      - name: currency_code
+        description: "Reporting currency code (BRL)."
+
+  - name: stg_customer_segments
+    description: "Typed staging view for B2B commercial customer segments."
+    columns:
+      - name: segment_id
+        description: "Canonical customer segment identifier."
+      - name: segment_name
+        description: "Commercial segment name."
+      - name: tier_group
+        description: "Strategic account tier grouping."
+      - name: account_band
+        description: "Annual contract value band label."
+      - name: is_enterprise
+        description: "Boolean flag indicating Enterprise strategic accounts."
+
+  - name: stg_service_tiers
+    description: "Typed staging view for contractual operational SLA tiers."
+    columns:
+      - name: service_tier_id
+        description: "Canonical service tier identifier."
+      - name: service_tier_name
+        description: "Operational service tier name."
+      - name: priority_level
+        description: "Incident severity priority code (P1, P2, P3)."
+      - name: sla_target_hours
+        description: "Contractual SLA resolution target in hours."
+      - name: support_window
+        description: "Applicable SLA calendar window."
+
+  - name: stg_revenue_orders
+    description: "Typed staging view for deterministic synthetic B2B revenue orders."
+    columns:
+      - name: order_id
+        description: "Canonical order identifier."
+      - name: order_date
+        description: "Revenue recognition date."
+      - name: region_id
+        description: "Foreign key to stg_regions."
+      - name: segment_id
+        description: "Foreign key to stg_customer_segments."
+      - name: service_tier_id
+        description: "Foreign key to stg_service_tiers."
+      - name: gross_revenue_brl
+        description: "Gross recognized order value in BRL."
+      - name: discount_brl
+        description: "Commercial discount applied in BRL."
+      - name: net_revenue_brl
+        description: "Net recognized revenue in BRL after discounts."
+      - name: direct_cost_brl
+        description: "Direct delivery cost in BRL."
+      - name: gross_margin_brl
+        description: "Gross margin contribution in BRL."
+      - name: target_revenue_brl
+        description: "Budgeted target net revenue in BRL."
+      - name: order_status
+        description: "Order billing status."
+
+  - name: stg_sla_tickets
+    description: "Typed staging view for deterministic synthetic operational SLA tickets."
+    columns:
+      - name: ticket_id
+        description: "Canonical service ticket identifier."
+      - name: created_date
+        description: "Ticket creation date."
+      - name: region_id
+        description: "Foreign key to stg_regions."
+      - name: segment_id
+        description: "Foreign key to stg_customer_segments."
+      - name: service_tier_id
+        description: "Foreign key to stg_service_tiers."
+      - name: resolution_hours
+        description: "Elapsed active resolution time in hours."
+      - name: is_sla_met
+        description: "Binary indicator (1 = met SLA, 0 = breached)."
+      - name: is_breached
+        description: "Binary indicator (1 = SLA breached, 0 = within SLA)."
+      - name: ticket_status
+        description: "Ticket lifecycle status."

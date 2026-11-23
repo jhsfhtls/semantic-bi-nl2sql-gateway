@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "last_updated": "2026-11-23",
   "project_name": "semantic-bi-nl2sql-gateway",
-  "current_phase_id": "phase-01",
+  "current_phase_id": "phase-02",
   "overall_status": "ON_TRACK",
   "phases": [
     {
@@ -41,12 +41,12 @@
       "label": "Fase 02",
       "name": "Ingestor dbt & Compilador Semântico (Grafo de Joins)",
       "branch": "feat/phase-02-dbt-ingestor-semantic-compiler",
-      "status": "PENDING",
-      "completed_at": null,
+      "status": "COMPLETED",
+      "completed_at": "2026-11-23",
       "deliverables": [
-        "Projeto dbt sintético embarcado (dbt/, seed=42) com cobertura 100% no lint_dbt_docs.py",
-        "Ingestor de manifest.json, schema.yml e metrics.yaml",
-        "Compilador semântico com grafo dirigido de joins permitidos e prevenção de fan-out e chasm traps"
+        "Projeto dbt sintético embarcado (dbt/, seed=42) com 11 modelos, 33 data tests e cobertura 100% no lint_dbt_docs.py",
+        "Ingestor de manifest.json, schema.yml e metrics.yaml (DbtMetadataIngestor)",
+        "Compilador semântico com grafo dirigido de joins permitidos e prevenção de fan-out e chasm traps (SemanticCompiler)"
       ],
       "gate": "dbt build, lint_dbt_docs.py e testes unitários (incluindo fan-out/chasm traps) verdes"
     },
@@ -146,6 +146,12 @@
       "phase": "Fase 01",
       "milestone": "Fundação, .venv Isolado, CI/CD & Renderizadores Determinísticos",
       "summary": "Estrutura Python 3.12 com dependências pinadas (==), workflows CI/pr-lint, renderizadores CATALOG.md/JORNADA_IMPLEMENTACAO.md e testes de fundação."
+    },
+    {
+      "date": "2026-11-23",
+      "phase": "Fase 02",
+      "milestone": "Projeto dbt Sintético, Ingestor de Metadados & Compilador Semântico",
+      "summary": "Projeto dbt DuckDB (5 seeds, 11 modelos, 33 data tests, 100% docs coverage), DbtMetadataIngestor e SemanticCompiler prevenindo fan-out e chasm traps."
     }
   ]
 }
