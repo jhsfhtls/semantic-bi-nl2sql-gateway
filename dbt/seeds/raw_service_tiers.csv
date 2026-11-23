@@ -1,0 +1,4 @@
+service_tier_id,service_tier_name,priority_level,sla_target_hours,support_window
+TIER_GOLD,Gold 24x7,P1,4.00,24x7
+TIER_SILVER,Silver Business Hours,P2,24.00,Business Hours
+TIER_STD,Standard,P3,72.00,Business Hours

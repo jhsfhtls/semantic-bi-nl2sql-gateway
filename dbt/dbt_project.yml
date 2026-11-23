@@ -1,0 +1,21 @@
+name: "sbg_semantic_demo"
+version: "1.0.0"
+config-version: 2
+
+profile: "sbg_semantic_demo"
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  sbg_semantic_demo:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

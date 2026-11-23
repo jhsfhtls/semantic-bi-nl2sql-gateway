@@ -12,16 +12,16 @@
 
 ## 1. Painel Executivo em Tempo Real
 
-- **Última Fase Concluída / Ativa:** `Fase 01 — Fundação do Repositório, .venv, CI/CD & Renderizadores`
+- **Última Fase Concluída / Ativa:** `Fase 02 — Ingestor dbt & Compilador Semântico (Grafo de Joins)`
 - **Status Geral:** `ON_TRACK`
-- **Progresso Estrutural:** **2 de 9 Fases Concluídas (22.2%)**
+- **Progresso Estrutural:** **3 de 9 Fases Concluídas (33.3%)**
 
 ```mermaid
 flowchart LR
     F00["Fase 00: CONCLUIDO"]
     F01["Fase 01: CONCLUIDO"]
     F00 --> F01
-    F02["Fase 02: PENDENTE"]
+    F02["Fase 02: CONCLUIDO"]
     F01 --> F02
     F03["Fase 03: PENDENTE"]
     F02 --> F03
@@ -45,7 +45,7 @@ flowchart LR
 | :---: | :--- | :--- | :---: | :---: | :--- |
 | **Fase 00** | **ADRs Fundacionais & Contrato Semântico (metrics.yaml)** | `docs/phase-00-adrs-and-semantic-schema` | `CONCLUIDO` | `2026-11-23` | • ADR-001: compilação semântica determinística antes de LLM e prevenção de fan-out/chasm traps<br/>• ADR-002: AstSqlFirewall (sqlglot) + defesa em profundidade DuckDB somente-leitura<br/>• ADR-003: padrão determinístico de geração Power BI (DAX/TMDL, Power Query M, tema WCAG AA)<br/>• catalog/metrics_schema.json (Draft 2020-12), catalog/metrics.yaml (6 modelos, 8 joins, 8 métricas) e scripts/validate_metrics_schema.py<br/><i>Gate: ADRs revisados e schema/invariantes do metrics.yaml validados (PR #1 mergeado)</i> |
 | **Fase 01** | **Fundação do Repositório, .venv, CI/CD & Renderizadores** | `chore/phase-01-foundation-ci-catalog` | `CONCLUIDO` | `2026-11-23` | • .venv isolado Python 3.12 com dependências pinadas (==) em requirements.txt e requirements-dev.txt<br/>• pyproject.toml com entrypoints sbg e sbg-mcp e esqueleto src/semantic_bi_gateway/<br/>• catalog/dax_templates.yaml, catalog/benchmark_registry.yaml e render_catalog.py (CATALOG.md)<br/>• state/project_progress.json e render_progress.py (JORNADA_IMPLEMENTACAO.md)<br/>• Workflows GitHub Actions (.github/workflows/ci.yml e pr-lint.yml), README.md e tests/test_foundation.py<br/><i>Gate: ruff, validate_metrics_schema, render_* --check, pytest e CI 100% verdes</i> |
-| **Fase 02** | **Ingestor dbt & Compilador Semântico (Grafo de Joins)** | `feat/phase-02-dbt-ingestor-semantic-compiler` | `PENDENTE` | — | • Projeto dbt sintético embarcado (dbt/, seed=42) com cobertura 100% no lint_dbt_docs.py<br/>• Ingestor de manifest.json, schema.yml e metrics.yaml<br/>• Compilador semântico com grafo dirigido de joins permitidos e prevenção de fan-out e chasm traps<br/><i>Gate: dbt build, lint_dbt_docs.py e testes unitários (incluindo fan-out/chasm traps) verdes</i> |
+| **Fase 02** | **Ingestor dbt & Compilador Semântico (Grafo de Joins)** | `feat/phase-02-dbt-ingestor-semantic-compiler` | `CONCLUIDO` | `2026-11-23` | • Projeto dbt sintético embarcado (dbt/, seed=42) com 11 modelos, 33 data tests e cobertura 100% no lint_dbt_docs.py<br/>• Ingestor de manifest.json, schema.yml e metrics.yaml (DbtMetadataIngestor)<br/>• Compilador semântico com grafo dirigido de joins permitidos e prevenção de fan-out e chasm traps (SemanticCompiler)<br/><i>Gate: dbt build, lint_dbt_docs.py e testes unitários (incluindo fan-out/chasm traps) verdes</i> |
 | **Fase 03** | **Codegen Power BI (DAX, TMDL, Power Query M, Tema WCAG AA)** | `feat/phase-03-powerbi-codegen` | `PENDENTE` | — | • Gerador .dax e .tmdl (medidas base + YTD, YoY%, MoM%, Rolling 12M, variância vs. meta)<br/>• Scripts .pq parametrizados para DuckDB, Databricks e Snowflake<br/>• corporate_theme.json com contraste WCAG AA (>= 4.5:1) e dicionário de KPIs em Markdown<br/><i>Gate: Golden files determinísticos e validadores sintáticos/WCAG AA verdes</i> |
 | **Fase 04** | **Text-to-SQL Governado & AstSqlFirewall Completo** | `feat/phase-04-nl2sql-ast-firewall` | `PENDENTE` | — | • Motor NL2SQL determinístico offline (PT/EN sobre catálogo semântico) + adaptador opcional de LLM<br/>• AstSqlFirewall (sqlglot) + DuckDB read-only com bloqueio de IO/rede, PII e bypasses<br/>• Suíte adversarial completa (DROP, ATTACH, COPY, INSTALL, LOAD, PRAGMA, read_csv/parquet, .env, unicode)<br/><i>Gate: 100% de bloqueio na suíte adversarial</i> |
 | **Fase 05** | **Ponte Multi-Lakehouse Read-Only & Fallback Sintético** | `feat/phase-05-multi-lakehouse-bridge` | `PENDENTE` | — | • Adaptador read-only para public-data-gateway, finops-capex-revenue-lakehouse e ops-sla-telemetry-lakehouse<br/>• Client Path Shield e fallback automático para dataset sintético embarcado (seed=42)<br/><i>Gate: Execução isolada no GitHub sem dependências privadas + testes de bloqueio de escrita</i> |
@@ -61,6 +61,7 @@ flowchart LR
 | :---: | :---: | :--- | :--- |
 | `2026-11-23` | **Fase 00** | ADRs Fundacionais & Contrato Semântico | Criação do repositório público semantic-bi-nl2sql-gateway, ADR-001..003, JSON Schema Draft 2020-12 e catálogo metrics.yaml validado via PR #1. |
 | `2026-11-23` | **Fase 01** | Fundação, .venv Isolado, CI/CD & Renderizadores Determinísticos | Estrutura Python 3.12 com dependências pinadas (==), workflows CI/pr-lint, renderizadores CATALOG.md/JORNADA_IMPLEMENTACAO.md e testes de fundação. |
+| `2026-11-23` | **Fase 02** | Projeto dbt Sintético, Ingestor de Metadados & Compilador Semântico | Projeto dbt DuckDB (5 seeds, 11 modelos, 33 data tests, 100% docs coverage), DbtMetadataIngestor e SemanticCompiler prevenindo fan-out e chasm traps. |
 
 ---
 

@@ -1,0 +1,9 @@
+region_id,region_name,uf_code,macro_region,country_code,currency_code
+REG_AM,Manaus - Amazonas,AM,Norte,BR,BRL
+REG_SP,Sao Paulo,SP,Sudeste,BR,BRL
+REG_RJ,Rio de Janeiro,RJ,Sudeste,BR,BRL
+REG_MG,Minas Gerais,MG,Sudeste,BR,BRL
+REG_BA,Bahia,BA,Nordeste,BR,BRL
+REG_PE,Pernambuco,PE,Nordeste,BR,BRL
+REG_PR,Parana,PR,Sul,BR,BRL
+REG_DF,Distrito Federal,DF,Centro-Oeste,BR,BRL

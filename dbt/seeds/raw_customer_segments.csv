@@ -1,0 +1,5 @@
+segment_id,segment_name,tier_group,account_band,is_enterprise
+SEG_ENT,Enterprise,Strategic,ACV > 500k BRL,true
+SEG_MID,Mid-Market,Growth,ACV 100k-500k BRL,false
+SEG_SMB,SMB,Velocity,ACV < 100k BRL,false
+SEG_PUB,Public Sector,Institutional,Gov & Regulatory,true
