@@ -1,0 +1,56 @@
+# Security & Environment Secrets
+.env
+.env.*
+!.env.example
+
+# Python Virtual Environment & Packaging
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Local Lakehouse Storage & Databases (Keep only data/reference/ versioned)
+data/*
+!data/reference/
+!data/reference/**
+*.parquet
+*.duckdb
+*.duckdb.wal
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# dbt Artifacts & Logs
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/.user.yml
+
+# Generated BI Outputs & Runtime Telemetry
+bi/output/
+.logs/
+.state/
+*.lock
+
+# --- AI SATELLITE SHIELD (DO NOT REMOVE) ---
+.claude/rules/
+.windsurf/
+.github/instructions/
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+.windsurfrules
+.cursor/
+.github/copilot-instructions.md
+.agents/cache/
+.agents/memory/
+.agents/
+# --------------------------------------------
