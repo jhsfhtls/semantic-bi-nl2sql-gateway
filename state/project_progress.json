@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "last_updated": "2026-11-23",
   "project_name": "semantic-bi-nl2sql-gateway",
-  "current_phase_id": "phase-04",
+  "current_phase_id": "phase-05",
   "overall_status": "ON_TRACK",
   "phases": [
     {
@@ -83,11 +83,12 @@
       "label": "Fase 05",
       "name": "Ponte Multi-Lakehouse Read-Only & Fallback Sintético",
       "branch": "feat/phase-05-multi-lakehouse-bridge",
-      "status": "PENDING",
-      "completed_at": null,
+      "status": "COMPLETED",
+      "completed_at": "2026-11-23",
       "deliverables": [
-        "Adaptador read-only para public-data-gateway, finops-capex-revenue-lakehouse e ops-sla-telemetry-lakehouse",
-        "Client Path Shield e fallback automático para dataset sintético embarcado (seed=42)"
+        "MultiLakehouseBridge read-only para public-data-gateway, finops-capex-revenue-lakehouse e ops-sla-telemetry-lakehouse",
+        "ClientPathShield (POP_T_154) impedindo gravação de dados locais no repositório público",
+        "Bootstrap sintético determinístico (materialize_synthetic_duckdb) e fallback automático para execução isolada"
       ],
       "gate": "Execução isolada no GitHub sem dependências privadas + testes de bloqueio de escrita"
     },
@@ -164,6 +165,12 @@
       "phase": "Fase 04",
       "milestone": "NL2SQL Governado Bilíngue, AstSqlFirewall & DuckDB Somente-Leitura",
       "summary": "AstSqlFirewall (sqlglot), ReadOnlyDuckDbExecutor, DeterministicNl2SqlEngine PT/EN e OptionalLlmAdapter com 100% de bloqueio em suíte adversarial."
+    },
+    {
+      "date": "2026-11-23",
+      "phase": "Fase 05",
+      "milestone": "Ponte Multi-Lakehouse Read-Only, Client Path Shield & Fallback Sintético",
+      "summary": "MultiLakehouseBridge (PDG/FinOps/Ops-SLA read-only), ClientPathShield (POP_T_154) e materialize_synthetic_duckdb garantindo execução isolada no CI."
     }
   ]
 }
