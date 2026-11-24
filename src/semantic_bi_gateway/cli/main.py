@@ -9,42 +9,15 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
-import yaml
-
-from semantic_bi_gateway import __version__
-
-
-def resolve_repo_root(explicit_root: Path | None = None) -> Path:
-    """Resolve repository root safely across editable installs and git worktrees."""
-    if explicit_root is not None:
-        return explicit_root.resolve()
-    cwd_root = Path.cwd().resolve()
-    if (cwd_root / "catalog" / "metrics.yaml").is_file():
-        return cwd_root
-    package_root = Path(__file__).resolve().parents[3]
-    return package_root
+from semantic_bi_gateway._version import __version__
+from semantic_bi_gateway.lakehouse import ClientPathShieldError
+from semantic_bi_gateway.nl2sql import LlmProviderUnavailableError, SqlFirewallViolation
+from semantic_bi_gateway.sdk import SemanticBiGateway
+from semantic_bi_gateway.semantic import SemanticCompilationError
 
 
-def collect_status(repo_root: Path) -> dict[str, Any]:
-    """Read certified catalog metadata and return gateway status payload."""
-    metrics_path = repo_root / "catalog" / "metrics.yaml"
-    if not metrics_path.is_file():
-        raise FileNotFoundError(f"Semantic catalog not found: {metrics_path}")
-
-    catalog = yaml.safe_load(metrics_path.read_text(encoding="utf-8"))
-    security = catalog.get("security", {})
-    return {
-        "service": "semantic-bi-nl2sql-gateway",
-        "version": __version__,
-        "default_mode": "deterministic",
-        "default_dialect": catalog.get("default_dialect", "duckdb"),
-        "schema_version": catalog.get("schema_version", "unknown"),
-        "semantic_models_count": len(catalog.get("semantic_models", [])),
-        "allowed_joins_count": len(catalog.get("allowed_joins", [])),
-        "certified_metrics_count": len(catalog.get("metrics", [])),
-        "blocked_sensitive_columns_count": len(security.get("blocked_sensitive_columns", [])),
-        "catalog_path": str(metrics_path),
-    }
+def _emit_json(payload: dict[str, Any]) -> None:
+    print(json.dumps(payload, indent=2, ensure_ascii=False))
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -59,19 +32,68 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command")
 
+    def _add_repo_root_arg(sub: argparse.ArgumentParser) -> None:
+        sub.add_argument(
+            "--repo-root",
+            type=Path,
+            default=None,
+            help="Optional repository or worktree root path.",
+        )
+        sub.add_argument(
+            "--json",
+            action="store_true",
+            dest="as_json",
+            help="Emit output as machine-readable JSON.",
+        )
+
     status_parser = subparsers.add_parser("status", help="Show semantic catalog and gateway status.")
-    status_parser.add_argument(
-        "--repo-root",
+    _add_repo_root_arg(status_parser)
+
+    compile_parser = subparsers.add_parser("compile-bi", help="Generate Power BI DAX, TMDL, M, theme, and KPI dict.")
+    compile_parser.add_argument(
+        "--output-dir",
         type=Path,
         default=None,
-        help="Optional repository/worktree root path.",
+        help="Optional directory to write generated BI artifacts.",
     )
-    status_parser.add_argument(
-        "--json",
+    _add_repo_root_arg(compile_parser)
+
+    ask_parser = subparsers.add_parser("ask", help="Translate and execute a governed PT/EN business question.")
+    ask_parser.add_argument("question", help="Business question in Portuguese or English.")
+    ask_parser.add_argument(
+        "--lakehouse",
+        default=None,
+        help="Optional preferred local lakehouse id (defaults to embedded synthetic dataset).",
+    )
+    ask_parser.add_argument(
+        "--mode",
+        choices=("deterministic", "llm"),
+        default="deterministic",
+        help="Translation mode (default: deterministic offline).",
+    )
+    ask_parser.add_argument(
+        "--dry-run",
         action="store_true",
-        dest="as_json",
-        help="Emit status as machine-readable JSON.",
+        help="Translate and validate SQL via AST firewall without executing on DuckDB.",
     )
+    _add_repo_root_arg(ask_parser)
+
+    val_parser = subparsers.add_parser("validate-sql", help="Validate untrusted DuckDB SQL through AstSqlFirewall.")
+    val_parser.add_argument("sql", help="SQL query string to validate.")
+    _add_repo_root_arg(val_parser)
+
+    eval_parser = subparsers.add_parser("eval", help="Run the 50-question NL2SQL + 20-adversarial benchmark.")
+    _add_repo_root_arg(eval_parser)
+
+    kpi_parser = subparsers.add_parser("kpi-dict", help="Generate Markdown KPI dictionary from certified catalog.")
+    kpi_parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="Optional output Markdown file path.",
+    )
+    _add_repo_root_arg(kpi_parser)
+
     return parser
 
 
@@ -84,11 +106,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         parser.print_help()
         return 0
 
+    gateway = SemanticBiGateway(repo_root=args.repo_root)
+
     if args.command == "status":
-        repo_root = resolve_repo_root(args.repo_root)
-        status = collect_status(repo_root)
+        status = gateway.status()
         if args.as_json:
-            print(json.dumps(status, indent=2))
+            _emit_json(status)
             return 0
         print(
             f"semantic-bi-nl2sql-gateway v{status['version']} "
@@ -100,6 +123,98 @@ def main(argv: Sequence[str] | None = None) -> int:
             f"{status['certified_metrics_count']} certified metrics | "
             f"{status['blocked_sensitive_columns_count']} blocked sensitive columns"
         )
+        return 0
+
+    if args.command == "compile-bi":
+        try:
+            result = gateway.compile_bi(output_dir=args.output_dir)
+        except ClientPathShieldError as exc:
+            if args.as_json:
+                _emit_json({"error": "CLIENT_PATH_SHIELD", "reason": str(exc)})
+            else:
+                print(f"[BLOCKED] {exc}", file=sys.stderr)
+            return 2
+
+        if args.as_json:
+            _emit_json(result)
+            return 0
+        print(
+            f"[OK] Generated {len(result['artifacts'])} BI artifacts "
+            f"({result['measure_count']} DAX measures, {result['metric_count']} certified KPIs)."
+        )
+        if result["written_files"]:
+            print(f"Output directory: {Path(result['written_files'][0]).parent}")
+        return 0
+
+    if args.command == "ask":
+        try:
+            result = gateway.ask(
+                question=args.question,
+                lakehouse=args.lakehouse,
+                mode=args.mode,
+                dry_run=args.dry_run,
+            )
+        except SqlFirewallViolation as exc:
+            if args.as_json:
+                _emit_json({"error": exc.code, "reason": exc.reason})
+            else:
+                print(f"[BLOCKED:{exc.code}] {exc.reason}", file=sys.stderr)
+            return 2
+        except (SemanticCompilationError, LlmProviderUnavailableError) as exc:
+            if args.as_json:
+                _emit_json({"error": type(exc).__name__, "reason": str(exc)})
+            else:
+                print(f"[ERROR:{type(exc).__name__}] {exc}", file=sys.stderr)
+            return 2
+
+        if args.as_json:
+            _emit_json(result)
+            return 0
+        print(f"SQL ({result['strategy']}): {result['sql']}")
+        if not result["dry_run"]:
+            print(f"Rows ({result['row_count']}): {json.dumps(result['rows'], ensure_ascii=False)}")
+        return 0
+
+    if args.command == "validate-sql":
+        result = gateway.validate_sql(args.sql)
+        if args.as_json:
+            _emit_json(result)
+        elif result["allowed"]:
+            print(f"[ALLOWED] Limit={result['applied_limit']} | SQL: {result['sanitized_sql']}")
+        else:
+            print(f"[BLOCKED:{result['code']}] {result['reason']}", file=sys.stderr)
+        return 0 if result["allowed"] else 2
+
+    if args.command == "eval":
+        result = gateway.run_evals()
+        if args.as_json:
+            _emit_json(result)
+        else:
+            print(
+                f"[EVAL] GatesPassed={result['gates_passed']} | "
+                f"HashMatch={result['hash_matches']}/{result['total_business_cases']} | "
+                f"ASTMatch={result['ast_matches']}/{result['total_business_cases']} | "
+                f"AdversarialBlocked={result['adversarial_blocked']}/{result['total_adversarial_cases']}"
+            )
+        return 0 if result["gates_passed"] else 1
+
+    if args.command == "kpi-dict":
+        result = gateway.kpi_dictionary()
+        if args.output is not None:
+            try:
+                safe_path = gateway.bridge.shield.validate_output_path(args.output)
+            except ClientPathShieldError as exc:
+                if args.as_json:
+                    _emit_json({"error": "CLIENT_PATH_SHIELD", "reason": str(exc)})
+                else:
+                    print(f"[BLOCKED] {exc}", file=sys.stderr)
+                return 2
+            safe_path.parent.mkdir(parents=True, exist_ok=True)
+            safe_path.write_bytes(result["markdown"].encode("utf-8"))
+        if args.as_json:
+            _emit_json(result)
+        else:
+            print(result["markdown"])
         return 0
 
     return 1

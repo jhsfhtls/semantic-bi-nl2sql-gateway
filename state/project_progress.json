@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "last_updated": "2026-11-23",
   "project_name": "semantic-bi-nl2sql-gateway",
-  "current_phase_id": "phase-06",
+  "current_phase_id": "phase-07",
   "overall_status": "ON_TRACK",
   "phases": [
     {
@@ -111,12 +111,12 @@
       "label": "Fase 07",
       "name": "Paridade nas 4 Interfaces (SDK, CLI, FastAPI, MCP)",
       "branch": "feat/phase-07-four-interface-parity",
-      "status": "PENDING",
-      "completed_at": null,
+      "status": "COMPLETED",
+      "completed_at": "2026-11-23",
       "deliverables": [
-        "SDK SemanticBiGateway e CLI sbg (compile-bi, ask, validate-sql, eval, kpi-dict, status)",
-        "FastAPI /api/v1/* com OpenAPI e MCP sbg-mcp com delimitadores <untrusted_data>",
-        "Testes de paridade e enforcement do AstSqlFirewall em todas as interfaces"
+        "SDK SemanticBiGateway e CLI sbg completo (status, compile-bi, ask, validate-sql, eval, kpi-dict)",
+        "FastAPI /api/v1/* com mapeamento HTTP de violações (403/422/503) e documentação OpenAPI",
+        "MCP sbg-mcp JSON-RPC 2.0 com 6 tools, wrapper <untrusted_data> e testes de paridade nas 4 interfaces"
       ],
       "gate": "Paridade total, firewall ativo nas 4 interfaces e quickstart <= 60s"
     },
@@ -177,6 +177,12 @@
       "phase": "Fase 06",
       "milestone": "Harness de Evals NL2SQL (50 Perguntas PT/EN + 20 Sondas Adversariais)",
       "summary": "Nl2SqlEvalHarness e scripts/eval_nl2sql.py --check integrados ao CI com 50/50 Hash Match, 50/50 AST Match e 20/20 bloqueio adversarial."
+    },
+    {
+      "date": "2026-11-23",
+      "phase": "Fase 07",
+      "milestone": "Paridade Unificada nas 4 Interfaces (SDK, CLI sbg, FastAPI & MCP sbg-mcp)",
+      "summary": "SemanticBiGateway compartilhado por SDK, CLI sbg, FastAPI /api/v1/* e MCP sbg-mcp (<untrusted_data>) com AstSqlFirewall em 100% das rotas."
     }
   ]
 }

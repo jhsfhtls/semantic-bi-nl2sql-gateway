@@ -12,9 +12,9 @@
 
 ## 1. Painel Executivo em Tempo Real
 
-- **Última Fase Concluída / Ativa:** `Fase 06 — Harness de Evals NL2SQL (50 Perguntas + Bateria Adversarial)`
+- **Última Fase Concluída / Ativa:** `Fase 07 — Paridade nas 4 Interfaces (SDK, CLI, FastAPI, MCP)`
 - **Status Geral:** `ON_TRACK`
-- **Progresso Estrutural:** **7 de 9 Fases Concluídas (77.8%)**
+- **Progresso Estrutural:** **8 de 9 Fases Concluídas (88.9%)**
 
 ```mermaid
 flowchart LR
@@ -31,7 +31,7 @@ flowchart LR
     F04 --> F05
     F06["Fase 06: CONCLUIDO"]
     F05 --> F06
-    F07["Fase 07: PENDENTE"]
+    F07["Fase 07: CONCLUIDO"]
     F06 --> F07
     F08["Fase 08: PENDENTE"]
     F07 --> F08
@@ -50,7 +50,7 @@ flowchart LR
 | **Fase 04** | **Text-to-SQL Governado & AstSqlFirewall Completo** | `feat/phase-04-nl2sql-ast-firewall` | `CONCLUIDO` | `2026-11-23` | • Motor NL2SQL determinístico bilíngue PT/EN (DeterministicNl2SqlEngine) + adaptador opcional de LLM (OptionalLlmAdapter)<br/>• AstSqlFirewall (sqlglot) + ReadOnlyDuckDbExecutor com bloqueio de IO/rede, PII, Unicode NFKC e lock_configuration<br/>• Suíte adversarial completa (38 cargas bloqueadas: 100%) e testes end-to-end contra DuckDB<br/><i>Gate: 100% de bloqueio na suíte adversarial</i> |
 | **Fase 05** | **Ponte Multi-Lakehouse Read-Only & Fallback Sintético** | `feat/phase-05-multi-lakehouse-bridge` | `CONCLUIDO` | `2026-11-23` | • MultiLakehouseBridge read-only para public-data-gateway, finops-capex-revenue-lakehouse e ops-sla-telemetry-lakehouse<br/>• ClientPathShield (POP_T_154) impedindo gravação de dados locais no repositório público<br/>• Bootstrap sintético determinístico (materialize_synthetic_duckdb) e fallback automático para execução isolada<br/><i>Gate: Execução isolada no GitHub sem dependências privadas + testes de bloqueio de escrita</i> |
 | **Fase 06** | **Harness de Evals NL2SQL (50 Perguntas + Bateria Adversarial)** | `feat/phase-06-nl2sql-eval-harness` | `CONCLUIDO` | `2026-11-23` | • Benchmark versionado com 50 perguntas PT/EN (5 suítes) e 20 sondas adversariais (benchmarks/nl2sql_benchmark.json)<br/>• Nl2SqlEvalHarness + scripts/eval_nl2sql.py (--check) e relatório determinístico benchmarks/EVAL_REPORT.md<br/>• Pisos impostos no CI: 100.0% Hash Match (>= 96%), 100.0% AST Match (>= 94%) e 100.0% bloqueio adversarial<br/><i>Gate: eval_nl2sql.py verde no CI atingindo os pisos mínimos definidos</i> |
-| **Fase 07** | **Paridade nas 4 Interfaces (SDK, CLI, FastAPI, MCP)** | `feat/phase-07-four-interface-parity` | `PENDENTE` | — | • SDK SemanticBiGateway e CLI sbg (compile-bi, ask, validate-sql, eval, kpi-dict, status)<br/>• FastAPI /api/v1/* com OpenAPI e MCP sbg-mcp com delimitadores <untrusted_data><br/>• Testes de paridade e enforcement do AstSqlFirewall em todas as interfaces<br/><i>Gate: Paridade total, firewall ativo nas 4 interfaces e quickstart <= 60s</i> |
+| **Fase 07** | **Paridade nas 4 Interfaces (SDK, CLI, FastAPI, MCP)** | `feat/phase-07-four-interface-parity` | `CONCLUIDO` | `2026-11-23` | • SDK SemanticBiGateway e CLI sbg completo (status, compile-bi, ask, validate-sql, eval, kpi-dict)<br/>• FastAPI /api/v1/* com mapeamento HTTP de violações (403/422/503) e documentação OpenAPI<br/>• MCP sbg-mcp JSON-RPC 2.0 com 6 tools, wrapper <untrusted_data> e testes de paridade nas 4 interfaces<br/><i>Gate: Paridade total, firewall ativo nas 4 interfaces e quickstart <= 60s</i> |
 | **Fase 08** | **Integração no C.O.R.E. (POP, Skill Inativa & Orquestradores)** | `feat/semantic-bi-nl2sql-integration` | `PENDENTE` | — | • Novo POP em core/docs/Tecnicos/Inteligencia_Artificial_ML_MLOps/ formatado (POP_T_148)<br/>• Skill inativa .agents/skills_inactive/tech-semantic-bi-nl2sql/ + tests/eval_cases.json (>= 4 casos)<br/>• Roteamento sob demanda em biz-consulting-orchestrator (Fase 6), tech-engineering-orchestrator e biz-study-orchestrator<br/><i>Gate: compile_rules, evals/engine.py --all, check_secrets e CI do core 100% verdes</i> |
 
 ---
@@ -66,6 +66,7 @@ flowchart LR
 | `2026-11-23` | **Fase 04** | NL2SQL Governado Bilíngue, AstSqlFirewall & DuckDB Somente-Leitura | AstSqlFirewall (sqlglot), ReadOnlyDuckDbExecutor, DeterministicNl2SqlEngine PT/EN e OptionalLlmAdapter com 100% de bloqueio em suíte adversarial. |
 | `2026-11-23` | **Fase 05** | Ponte Multi-Lakehouse Read-Only, Client Path Shield & Fallback Sintético | MultiLakehouseBridge (PDG/FinOps/Ops-SLA read-only), ClientPathShield (POP_T_154) e materialize_synthetic_duckdb garantindo execução isolada no CI. |
 | `2026-11-23` | **Fase 06** | Harness de Evals NL2SQL (50 Perguntas PT/EN + 20 Sondas Adversariais) | Nl2SqlEvalHarness e scripts/eval_nl2sql.py --check integrados ao CI com 50/50 Hash Match, 50/50 AST Match e 20/20 bloqueio adversarial. |
+| `2026-11-23` | **Fase 07** | Paridade Unificada nas 4 Interfaces (SDK, CLI sbg, FastAPI & MCP sbg-mcp) | SemanticBiGateway compartilhado por SDK, CLI sbg, FastAPI /api/v1/* e MCP sbg-mcp (<untrusted_data>) com AstSqlFirewall em 100% das rotas. |
 
 ---
 
