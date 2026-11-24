@@ -2,8 +2,8 @@
 
 > **dbt semantic-layer compiler, automated Power BI (DAX / Power Query M) code generator and AST-guarded zero-hallucination text-to-SQL analytics gateway** (`Python`, `dbt`, `DuckDB`, `sqlglot`, `Power BI`, `FastAPI`, `MCP`).
 
-> **Synthetic Data & Zero-Trust Privacy (`ADR-002` / `POP_T_154`):**  
-> This public repository runs **100% offline on deterministic synthetic data (`seed=42`)** by default. It contains **zero client data**, **zero PII**, and **zero secrets**. Local multi-lakehouse read-only queries enforce a strict sensitive-column blocklist and **Client Path Shield** keeping real outputs outside this repository.
+> **Synthetic Data & Zero-Trust Privacy (`ADR-002`):**  
+> This public repository runs **100% offline on deterministic synthetic data (`seed=42`)** by default. It contains **zero client data**, **zero PII**, and **zero secrets**. Local multi-lakehouse read-only queries enforce a strict sensitive-column blocklist and **strict output boundary guards** keeping real outputs outside this repository.
 
 ---
 
@@ -65,7 +65,7 @@ pytest -m "not live" -v
    from semantic_bi_gateway import SemanticBiGateway
 
    gw = SemanticBiGateway()
-   bi_bundle = gw.compile_bi()  # 52 DAX/TMDL measures + Power Query M + WCAG AA theme + KPI dict
+   bi_bundle = gw.compile_bi()  # DAX/TMDL measures + Power Query M + WCAG AA theme + KPI dict
    answer = gw.ask("Compare total revenue and SLA compliance rate by region")
    print(answer["strategy"], answer["row_count"], answer["result_hash_sha256"])
    ```
@@ -92,11 +92,11 @@ pytest -m "not live" -v
 
 ## 3. NL2SQL Benchmark Quality Gates (CI Enforced)
 
-Evaluated in `mode="deterministic"` across **50 bilingual (`PT`/`EN`) business questions** and **20 adversarial security probes** ([`benchmarks/nl2sql_benchmark.json`](benchmarks/nl2sql_benchmark.json) | [`benchmarks/EVAL_REPORT.md`](benchmarks/EVAL_REPORT.md)):
+Evaluated in `mode="deterministic"` across bilingual (`PT`/`EN`) business questions and adversarial security probes ([`benchmarks/nl2sql_benchmark.json`](benchmarks/nl2sql_benchmark.json) | [`benchmarks/EVAL_REPORT.md`](benchmarks/EVAL_REPORT.md)):
 
-- **Result-Set Hash Match (Deterministic Mode):** `100.0%` (`50/50` | CI floor: `>= 96%`)
-- **AST Equivalence Match (Deterministic Mode):** `100.0%` (`50/50` | CI floor: `>= 94%`)
-- **Adversarial Firewall Block Rate:** `100.0%` (`20/20` | CI floor: `== 100%`)
+- **Result-Set Hash Match (Deterministic Mode):** CI floor `>= 96%` (see `EVAL_REPORT.md` for latest run metrics)
+- **AST Equivalence Match (Deterministic Mode):** CI floor `>= 94%`
+- **Adversarial Firewall Block Rate:** CI floor `== 100%`
 
 ```bash
 python scripts/eval_nl2sql.py --check
@@ -108,11 +108,11 @@ python scripts/eval_nl2sql.py --check
 
 | Path | Purpose |
 | :--- | :--- |
-| [`catalog/metrics.yaml`](catalog/metrics.yaml) & [`catalog/metrics_schema.json`](catalog/metrics_schema.json) | Single Source of Truth semantic catalog and JSON Schema Draft 2020-12 contract |
+| [`catalog/metrics.yaml`](catalog/metrics.yaml) & [`catalog/metrics_schema.json`](catalog/metrics_schema.json) | Semantic catalog and JSON Schema Draft 2020-12 contract |
 | [`catalog/dax_templates.yaml`](catalog/dax_templates.yaml) & [`catalog/benchmark_registry.yaml`](catalog/benchmark_registry.yaml) | Declarative DAX/Power Query M template registry and NL2SQL benchmark gates |
 | [`docs/adr/`](docs/adr/) | Architecture Decision Records (`ADR-001` through `ADR-003`) |
-| [`src/semantic_bi_gateway/`](src/semantic_bi_gateway/) | Core gateway package (`cli`, `mcp`, expanding across Phases 02–07 into compiler, BI codegen, firewall, NL2SQL, lakehouse bridge, SDK, and FastAPI) |
+| [`src/semantic_bi_gateway/`](src/semantic_bi_gateway/) | Core gateway package (`compiler`, BI codegen, AST SQL firewall, NL2SQL engine, lakehouse bridge, SDK, CLI, FastAPI, and MCP) |
 | [`scripts/`](scripts/) | Deterministic schema validation and sync renderers (`CATALOG.md`, `JORNADA_IMPLEMENTACAO.md`) |
-| [`state/project_progress.json`](state/project_progress.json) & [`JORNADA_IMPLEMENTACAO.md`](JORNADA_IMPLEMENTACAO.md) | Live phase-by-phase implementation tracker (`00` through `08`) |
+| [`state/project_progress.json`](state/project_progress.json) & [`JORNADA_IMPLEMENTACAO.md`](JORNADA_IMPLEMENTACAO.md) | Implementation phase tracker |
 | [`CATALOG.md`](CATALOG.md) | Deterministically rendered catalog of models, KPIs, join graph, BI templates, and eval suites |
 | [`tests/`](tests/) | Deterministic offline pytest suite (`pytest -m "not live"`) |
