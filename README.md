@@ -53,8 +53,40 @@ python scripts/validate_metrics_schema.py
 python scripts/render_catalog.py --check
 python scripts/render_progress.py --check
 sbg status --json
+sbg compile-bi --output-dir bi/output
+sbg ask "What is the total net revenue by state?" --json
 pytest -m "not live" -v
 ```
+
+### Unified 4-Interface Parity (`SDK` = `CLI` = `FastAPI` = `MCP`)
+
+1. **Python SDK (`SemanticBiGateway`):**
+   ```python
+   from semantic_bi_gateway import SemanticBiGateway
+
+   gw = SemanticBiGateway()
+   bi_bundle = gw.compile_bi()  # 52 DAX/TMDL measures + Power Query M + WCAG AA theme + KPI dict
+   answer = gw.ask("Compare total revenue and SLA compliance rate by region")
+   print(answer["strategy"], answer["row_count"], answer["result_hash_sha256"])
+   ```
+2. **CLI (`sbg`):**
+   ```bash
+   sbg compile-bi --output-dir bi/output
+   sbg ask "Receita líquida por UF" --json
+   sbg validate-sql "SELECT region_name FROM dim_region" --json
+   sbg eval --json
+   sbg kpi-dict --output bi/output/kpi_dictionary.md
+   ```
+3. **FastAPI REST API (`/api/v1/*`):**
+   ```bash
+   uvicorn semantic_bi_gateway.api.app:create_app --factory --reload
+   # Endpoints: GET /health, GET /api/v1/status, POST /api/v1/compile-bi,
+   #            POST /api/v1/ask, POST /api/v1/validate-sql, POST /api/v1/eval, GET /api/v1/kpi-dict
+   ```
+4. **Stdio MCP Server (`sbg-mcp`):**
+   ```bash
+   sbg-mcp  # JSON-RPC 2.0 stdio tools wrapped in <untrusted_data> delimiters (OWASP LLM01/LLM02)
+   ```
 
 ---
 

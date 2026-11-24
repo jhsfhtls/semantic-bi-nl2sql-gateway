@@ -1,5 +1,6 @@
 """Semantic BI & AST-guarded NL2SQL Gateway package."""
 
-__version__ = "0.1.0"
+from semantic_bi_gateway._version import __version__
+from semantic_bi_gateway.sdk import SemanticBiGateway
 
-__all__ = ["__version__"]
+__all__ = ["SemanticBiGateway", "__version__"]

@@ -85,6 +85,11 @@ jobs:
           dbt docs generate --project-dir dbt --profiles-dir dbt
           python scripts/lint_dbt_docs.py
 
+      - name: Verify CLI `compile-bi` and `ask` smoke checks
+        run: |
+          sbg compile-bi --json > /dev/null
+          sbg ask "What is the total net revenue?" --json
+
       - name: Run deterministic NL2SQL eval harness & enforce CI floors
         run: python scripts/eval_nl2sql.py --check
 
