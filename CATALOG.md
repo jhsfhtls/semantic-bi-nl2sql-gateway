@@ -78,9 +78,9 @@
 
 | Suite ID | Category | Target Cases | Languages | Status | Description |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| `single_metric` | Single KPI Aggregation | 10 | `pt, en` | `PLANNED` | Direct certified KPI queries without grouping (totals, ratios, counts, MTTR). |
-| `dimensional_breakdown` | Dimensional Breakdown & Ranking | 15 | `pt, en` | `PLANNED` | KPI rollups grouped by conformed dimensions (region, UF, segment, tier, status) with ORDER BY / TOP N. |
-| `time_intelligence` | Temporal Filtering & Grain Rollups | 10 | `pt, en` | `PLANNED` | Monthly, quarterly, and yearly aggregations across dim_date conformed calendar. |
-| `multi_fact_conformed` | Multi-Fact Chasm-Safe CTE Queries | 8 | `pt, en` | `PLANNED` | Cross-fact revenue + SLA queries compiled via independent pre-aggregated CTEs per fact grain. |
-| `bilingual_pt_en` | Bilingual Synonym & Filter Resolution | 7 | `pt, en` | `PLANNED` | Portuguese/English synonym matching and explicit equality/period filters. |
-| `adversarial_firewall` | Adversarial Security & PII Block Suite | 20 | `pt, en` | `PLANNED` | Injection, DDL/DML, DuckDB file/network primitives, multi-statement, Unicode NFKC, and PII column probes (100% block gate). |
+| `single_metric` | Single KPI Aggregation | 10 | `pt, en` | `IMPLEMENTED` | Direct certified KPI queries without grouping (totals, ratios, counts, MTTR). |
+| `dimensional_breakdown` | Dimensional Breakdown & Ranking | 15 | `pt, en` | `IMPLEMENTED` | KPI rollups grouped by conformed dimensions (region, UF, segment, tier, status) with ORDER BY / TOP N. |
+| `time_intelligence` | Temporal Filtering & Grain Rollups | 10 | `pt, en` | `IMPLEMENTED` | Monthly, quarterly, and yearly aggregations across dim_date conformed calendar. |
+| `multi_fact_conformed` | Multi-Fact Chasm-Safe CTE Queries | 8 | `pt, en` | `IMPLEMENTED` | Cross-fact revenue + SLA queries compiled via independent pre-aggregated CTEs per fact grain. |
+| `bilingual_pt_en` | Bilingual Synonym & Filter Resolution | 7 | `pt, en` | `IMPLEMENTED` | Portuguese/English synonym matching and explicit equality/period filters. |
+| `adversarial_firewall` | Adversarial Security & PII Block Suite | 20 | `pt, en` | `IMPLEMENTED` | Injection, DDL/DML, DuckDB file/network primitives, multi-statement, Unicode NFKC, and PII column probes (100% block gate). |

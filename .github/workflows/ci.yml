@@ -85,5 +85,8 @@ jobs:
           dbt docs generate --project-dir dbt --profiles-dir dbt
           python scripts/lint_dbt_docs.py
 
+      - name: Run deterministic NL2SQL eval harness & enforce CI floors
+        run: python scripts/eval_nl2sql.py --check
+
       - name: Execute deterministic offline test suite
         run: pytest -m "not live" -v

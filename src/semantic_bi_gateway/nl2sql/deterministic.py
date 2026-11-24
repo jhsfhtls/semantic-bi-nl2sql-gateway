@@ -75,8 +75,6 @@ _METRIC_PHRASES: tuple[tuple[str, str], ...] = (
     ("quantos pedidos", "order_count"),
     ("order count", "order_count"),
     ("total orders", "order_count"),
-    ("orders", "order_count"),
-    ("pedidos", "order_count"),
     ("quantidade de chamados", "ticket_count"),
     ("numero de chamados", "ticket_count"),
     ("total de chamados", "ticket_count"),
@@ -86,8 +84,6 @@ _METRIC_PHRASES: tuple[tuple[str, str], ...] = (
     ("quantos chamados", "ticket_count"),
     ("service ticket count", "ticket_count"),
     ("ticket count", "ticket_count"),
-    ("chamados", "ticket_count"),
-    ("tickets", "ticket_count"),
     ("total net revenue", "total_revenue"),
     ("total revenue", "total_revenue"),
     ("receita liquida total", "total_revenue"),
@@ -566,7 +562,10 @@ class DeterministicNl2SqlEngine:
             if first_dim.startswith("dim_date."):
                 lines.append(f"ORDER BY {first_dim.split('.', 1)[1]} ASC")
             else:
-                lines.append(f"ORDER BY {subplan.metrics[0].name} {order_dir}")
+                tie_breakers = ", ".join(
+                    f"{dim.split('.', 1)[1]} ASC" for dim in subplan.dimensions
+                )
+                lines.append(f"ORDER BY {subplan.metrics[0].name} {order_dir}, {tie_breakers}")
         lines.append(f"LIMIT {limit_val}")
         return "\n".join(lines)
 
@@ -622,6 +621,7 @@ class DeterministicNl2SqlEngine:
             if plan.conformed_dimensions[0].startswith("dim_date."):
                 lines.append(f"ORDER BY {base_cte}.{dim_aliases[0]} ASC")
             else:
-                lines.append(f"ORDER BY {plan.metrics[0].name} {order_dir}")
+                tie_breakers = ", ".join(f"{base_cte}.{alias} ASC" for alias in dim_aliases)
+                lines.append(f"ORDER BY {plan.metrics[0].name} {order_dir}, {tie_breakers}")
         lines.append(f"LIMIT {limit_val}")
         return "\n".join(lines)
