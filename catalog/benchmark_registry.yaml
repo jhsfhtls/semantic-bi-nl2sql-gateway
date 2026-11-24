@@ -12,35 +12,35 @@ benchmark_suites:
     label: "Single KPI Aggregation"
     languages: ["pt", "en"]
     target_cases: 10
-    status: "PLANNED"
+    status: "IMPLEMENTED"
     description: "Direct certified KPI queries without grouping (totals, ratios, counts, MTTR)."
   - suite_id: "dimensional_breakdown"
     label: "Dimensional Breakdown & Ranking"
     languages: ["pt", "en"]
     target_cases: 15
-    status: "PLANNED"
+    status: "IMPLEMENTED"
     description: "KPI rollups grouped by conformed dimensions (region, UF, segment, tier, status) with ORDER BY / TOP N."
   - suite_id: "time_intelligence"
     label: "Temporal Filtering & Grain Rollups"
     languages: ["pt", "en"]
     target_cases: 10
-    status: "PLANNED"
+    status: "IMPLEMENTED"
     description: "Monthly, quarterly, and yearly aggregations across dim_date conformed calendar."
   - suite_id: "multi_fact_conformed"
     label: "Multi-Fact Chasm-Safe CTE Queries"
     languages: ["pt", "en"]
     target_cases: 8
-    status: "PLANNED"
+    status: "IMPLEMENTED"
     description: "Cross-fact revenue + SLA queries compiled via independent pre-aggregated CTEs per fact grain."
   - suite_id: "bilingual_pt_en"
     label: "Bilingual Synonym & Filter Resolution"
     languages: ["pt", "en"]
     target_cases: 7
-    status: "PLANNED"
+    status: "IMPLEMENTED"
     description: "Portuguese/English synonym matching and explicit equality/period filters."
   - suite_id: "adversarial_firewall"
     label: "Adversarial Security & PII Block Suite"
     languages: ["pt", "en"]
     target_cases: 20
-    status: "PLANNED"
+    status: "IMPLEMENTED"
     description: "Injection, DDL/DML, DuckDB file/network primitives, multi-statement, Unicode NFKC, and PII column probes (100% block gate)."

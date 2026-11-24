@@ -58,11 +58,17 @@ pytest -m "not live" -v
 
 ---
 
-## 3. Target NL2SQL Benchmark Quality Gates (CI Enforced in Phase 06)
+## 3. NL2SQL Benchmark Quality Gates (CI Enforced)
 
-- **Result-Set Hash Match (Deterministic Mode):** `>= 96%`
-- **AST Equivalence Match (Deterministic Mode):** `>= 94%`
-- **Adversarial Firewall Block Rate:** `100%`
+Evaluated in `mode="deterministic"` across **50 bilingual (`PT`/`EN`) business questions** and **20 adversarial security probes** ([`benchmarks/nl2sql_benchmark.json`](benchmarks/nl2sql_benchmark.json) | [`benchmarks/EVAL_REPORT.md`](benchmarks/EVAL_REPORT.md)):
+
+- **Result-Set Hash Match (Deterministic Mode):** `100.0%` (`50/50` | CI floor: `>= 96%`)
+- **AST Equivalence Match (Deterministic Mode):** `100.0%` (`50/50` | CI floor: `>= 94%`)
+- **Adversarial Firewall Block Rate:** `100.0%` (`20/20` | CI floor: `== 100%`)
+
+```bash
+python scripts/eval_nl2sql.py --check
+```
 
 ---
 

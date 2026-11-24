@@ -209,7 +209,7 @@ class AstSqlFirewall:
                     "WILDCARD_SELECT_BLOCKED",
                     "Wildcard '*' selection is prohibited; select certified columns explicitly.",
                 )
-            if isinstance(node, exp.Func):
+            if isinstance(node, exp.Func) and not isinstance(node, exp.Connector):
                 self._validate_function_node(node)
             if isinstance(node, exp.Alias):
                 alias_name = node.alias

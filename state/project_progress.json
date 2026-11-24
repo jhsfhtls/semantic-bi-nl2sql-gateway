@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "last_updated": "2026-11-23",
   "project_name": "semantic-bi-nl2sql-gateway",
-  "current_phase_id": "phase-05",
+  "current_phase_id": "phase-06",
   "overall_status": "ON_TRACK",
   "phases": [
     {
@@ -97,12 +97,12 @@
       "label": "Fase 06",
       "name": "Harness de Evals NL2SQL (50 Perguntas + Bateria Adversarial)",
       "branch": "feat/phase-06-nl2sql-eval-harness",
-      "status": "PENDING",
-      "completed_at": null,
+      "status": "COMPLETED",
+      "completed_at": "2026-11-23",
       "deliverables": [
-        "Benchmark com 50 perguntas de negócio (PT/EN) com gabarito SQL e hash de result-set",
-        "scripts/eval_nl2sql.py com AST equivalence, result-set hash match e adversarial block rate",
-        "Piso mínimo declarado no README e imposto no CI (modo determinístico)"
+        "Benchmark versionado com 50 perguntas PT/EN (5 suítes) e 20 sondas adversariais (benchmarks/nl2sql_benchmark.json)",
+        "Nl2SqlEvalHarness + scripts/eval_nl2sql.py (--check) e relatório determinístico benchmarks/EVAL_REPORT.md",
+        "Pisos impostos no CI: 100.0% Hash Match (>= 96%), 100.0% AST Match (>= 94%) e 100.0% bloqueio adversarial"
       ],
       "gate": "eval_nl2sql.py verde no CI atingindo os pisos mínimos definidos"
     },
@@ -171,6 +171,12 @@
       "phase": "Fase 05",
       "milestone": "Ponte Multi-Lakehouse Read-Only, Client Path Shield & Fallback Sintético",
       "summary": "MultiLakehouseBridge (PDG/FinOps/Ops-SLA read-only), ClientPathShield (POP_T_154) e materialize_synthetic_duckdb garantindo execução isolada no CI."
+    },
+    {
+      "date": "2026-11-23",
+      "phase": "Fase 06",
+      "milestone": "Harness de Evals NL2SQL (50 Perguntas PT/EN + 20 Sondas Adversariais)",
+      "summary": "Nl2SqlEvalHarness e scripts/eval_nl2sql.py --check integrados ao CI com 50/50 Hash Match, 50/50 AST Match e 20/20 bloqueio adversarial."
     }
   ]
 }
